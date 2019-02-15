@@ -19,7 +19,7 @@
 		along with this program.  If not, see <http://www.gnu.org/licenses/>   */
 
 // requires  “Math+++.js”  in  JS_toolbucket/
-// requires   “HTTP.js”  in  JS_toolbucket/SoftMoon-WebWare/    ← only when downloading color-palette tables from the web via ajax.  They may be included in other ways.
+// requires   “HTTP.js”  in  JS_toolbucket/    ← only when downloading color-palette tables from the web via ajax.  They may be included in other ways.
 
 
 
