@@ -1,5 +1,6 @@
 { "universal": {
 	"footer": ["http://en.wikipedia.org/wiki/List_of_colors", "http://cloford.com/resources/colours/500col.htm", "http://www.color-ize.com/color-list.php"],
+	"alternatives": "lowercase",
   "palette": {
 	"Air Force blue (RAF)": "5D8AA8",
 	"Air Force blue (USAF)": "00308F",
@@ -353,6 +354,9 @@
 	"Gray": "808080",
 	"Gray (HTML/CSS gray)": "808080",
 	"Gray (X11 gray)": "BEBEBE",
+	"grey": "808080",
+	"grey (html/css grey)": "808080",
+	"grey (x11 grey)": "BEBEBE",
 	"Gray-asparagus": "465945",
 	"Gray-blue": "8C92AC",
 	"Green (color wheel) (X11 green)": "00FF00",
@@ -672,9 +676,9 @@
 	"Purple pizzazz": "FE4EDA",
 	"Purple taupe": "50404D",
 	"Quartz": "51484F",
-	
+
 	"Quartz grey": "#6C6961",
-	
+
 	"Queen blue": "436B95",
 	"Queen pink": "E8CCD7",
 	"Rackley": "5D8AA8",
@@ -767,7 +771,7 @@
 	"Seashell": "FFF5EE",
 	"Selective yellow": "FFBA00",
 	"Sepia": "704214",
-	
+
 	"SGI Beet": "#8E388E",
 	"SGI Slateblue": "#7171C6",
 	"SGI Lightblue": "#7D9EC0",
@@ -847,10 +851,10 @@
 	"Tiffany Blue": "0ABAB5",
 	"Tiger's eye": "E08D3C",
 	"Timberwolf": "DBD7D2",
-	
+
 	"Titanium Oxide": "#F7F7FF",
 	"Titanium white": "#FFFFFF",
-	
+
 	"Titanium yellow": "EEE600",
 	"Tomato": "FF6347",
 	"Toolbox": "746CC0",
@@ -933,9 +937,9 @@
 	"Wisteria": "C9A0DC",
 	"Wood brown": "C19A6B",
 	"Xanadu": "738678",
-	
+
 	"Xanthic": "#EEED09",
-	
+
 	"Yale Blue": "0F4D92",
 	"Yellow": "FFFF00",
 	"Yellow (Munsell)": "EFCC00",
@@ -946,6 +950,6 @@
 	"Yellow Orange": "FFAE42",
 	"Zaffre": "0014A8",
 	"Zinnwaldite brown": "2C1608",
-	
+
 	"Zucchini": "#506022"
 }  }  }
