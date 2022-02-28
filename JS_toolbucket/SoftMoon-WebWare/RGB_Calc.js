@@ -1,6 +1,6 @@
 //  character encoding: UTF-8 UNIX   tab-spacing: 2   word-wrap: no   standard-line-length: 160
 
-// RGB_Calc.js  release 1.2  February 22, 2022  by SoftMoon WebWare.
+// RGB_Calc.js  release 1.3  February 27, 2022  by SoftMoon WebWare.
 // based on  rgb.js  Beta-1.0 release 1.0.3  August 1, 2015  by SoftMoon WebWare.
 /*   written by and Copyright © 2011, 2012, 2013, 2016, 2018, 2020, 2022 Joe Golembieski, SoftMoon WebWare
 
@@ -268,8 +268,8 @@ RegExp.cmyk= new window.RegExp( '^' +p+ sep +p+ sep +p+ sep +p+ '$' );
 RegExp.cmyka= new window.RegExp( '^' +p+ sep +p+ sep +p+ sep +p+ aSep + f + '$' );
 RegExp.cmyk_a= new window.RegExp( '^' +p+ sep +p+ sep +p+ sep +p+ '(?:' +aSep + f + ')?$' );
 
-const h_=  '\\s*(-?[0-9]+(?:\\.[0-9]*)?|-?0?\\.[0-9]+)(deg|°|g?rad|ʳ|ᴿ|ᶜ|ᴳ|ᵍ|%|turn|●)?\\s*',    //captures the postfix text (i.e. the “unit”) separately  →  m[1]='123' , m[2]='deg'
-			h='\\s*((?:-?[0-9]+(?:\\.[0-9]*)?|-?0?\\.[0-9]+)(?:deg|°|g?rad|ʳ|ᴿ|ᶜ|ᴳ|ᵍ|%|turn|●)?)\\s*';  //does not capture postfix text separately: it is included with the numerical data  →  m[1]='123deg'
+const h_=  '\\s*(-?[0-9]+(?:\\.[0-9]*)?|-?0?\\.[0-9]+)(deg|°|g?rad|ᴿ|ᶜ|ᵍ|%|turn|●)?\\s*',    //captures the postfix text (i.e. the “unit”) separately  →  m[1]='123' , m[2]='deg'
+			h='\\s*((?:-?[0-9]+(?:\\.[0-9]*)?|-?0?\\.[0-9]+)(?:deg|°|g?rad|ᴿ|ᶜ|ᵍ|%|turn|●)?)\\s*';  //does not capture postfix text separately: it is included with the numerical data  →  m[1]='123deg'
 							//hsl,hsv,hsb,hcg:   "v¹, v², v³"  where
 							// v¹=(±float)(unit),   and  ( 0 <= (float)(v²,v³) <= 100 )
 							// →→→ v¹ may or may not have (unit);  v²,v³ may or may not end with a percent sign %
@@ -320,7 +320,7 @@ function RGBA_Color($r, $g, $b, $a, $config)  {
 		1: {get: function() {return $g;},  set: function($grn) {$g=ThisColorObject.getByte($grn);},  enumerable: true},
 		2: {get: function() {return $b;},  set: function($blu) {$b=ThisColorObject.getByte($blu);},  enumerable: true},
 		3: {get: function() {return $a;},  set: function($alf) {$a=ThisColorObject.getAlpha($alf);},  enumerable: true}  });
-	Object.seal(rgb);  Object.seal(rgba);
+	//Object.seal(rgb);  Object.seal(rgba);
 	function readArr($arr)  { $r=this.getByte($arr[0]);  $g=this.getByte($arr[1]);  $b=this.getByte($arr[2]);
 		if (typeof $arr[3] === 'number')  $a=this.getByte($arr[3]);  }
 	Object.defineProperties(this, {
@@ -423,11 +423,11 @@ ColorWheel_Color.prototype.toString=function(format)  {
 	if (typeof format !== 'string')  format="";
 	format+= " "+this.config.stringFormat;
 	const arr=this[this.model.toLowerCase()],
-				alpha= (typeof this.a === 'number'  ||  (format.match( /alpha/i )  &&  (this.alpha=this.config.defaultAlpha||1)))  ?  'A' : "",
 				sep= this.model.toLowerCase()==='hwb' ? ' ' : ', ',
 				aSep= this.model.toLowerCase()==='hwb' ? ' / ' : ', ';
-	var s, hueAngleUnit=this.config.hueAngleUnit;
-	if (s=format.match( /deg|°|g?rad|ʳ|ᴿ|ᶜ|ᴳ|ᵍ|%|turn|●|factor/ ))  hueAngleUnit=s[0];
+	var alpha= (typeof this.a === 'number'  ||  (format.match( /alpha/i )  &&  (this.alpha=this.config.defaultAlpha||1)))  ?  'A' : "",
+			s, hueAngleUnit=this.config.hueAngleUnit;
+	if (s=format.match( /deg|°|g?rad|ᴿ|ᶜ|ᵍ|%|turn|●|factor/ ))  hueAngleUnit=s[0];
 	if (hueAngleUnit==='factor')  hueAngleUnit='turn';
 	if (typeof this.config.useAngleUnitSymbol === 'boolean')
 		switch (hueAngleUnit)  {
@@ -436,12 +436,10 @@ ColorWheel_Color.prototype.toString=function(format)  {
 		break;
 		case 'rad':
 		case "ᶜ":
-		case "ᴿ":
-		case "ʳ":  hueAngleUnit= this.config.useAngleUnitSymbol ? "ᴿ" : 'rad';
+		case "ᴿ": hueAngleUnit= this.config.useAngleUnitSymbol ? "ᴿ" : 'rad';
 		break;
 		case 'grad':
-		case "ᵍ":
-		case "ᴳ":   hueAngleUnit= this.config.useAngleUnitSymbol ? "ᵍ" : 'rad';
+		case "ᵍ": hueAngleUnit= this.config.useAngleUnitSymbol ? "ᵍ" : 'rad';
 		break;
 		case 'turn':
 		case "●":  hueAngleUnit= this.config.useAngleUnitSymbol ? "●" : 'turn';  }
@@ -470,12 +468,10 @@ ColorWheel_Color.hueUnitPrecision=
 		'deg':  {value: 2, enumerable: true},
 		"°":    {value: 2, enumerable: true},
 		'grad': {value: 2, enumerable: true},
-		'ᴳ':    {value: 2, enumerable: true},
 		'ᵍ':    {value: 2, enumerable: true},
 		'rad':  {value: 5, enumerable: true},
 		"ᶜ":    {value: 5, enumerable: true},
 		"ᴿ":    {value: 5, enumerable: true},
-		"ʳ":    {value: 5, enumerable: true},
 		"%":    {value: 4, enumerable: true},
 		'turn': {value: 6, enumerable: true},
 		"●":    {value: 6, enumerable: true}  });
@@ -930,7 +926,7 @@ RGB_Calc.ConfigStack.prototype={
 			if (c_o[3] === undefined)  {c_o[3]=a;  return c_o;}
 			else if (this.multiplyAddOnAlpha)  {c_o[3]=this.multiplyAddOnAlpha(c_o[3], a);  return c_o;}
 			else return this.onError('Can not apply add-on alpha; it is already set', source);  }
-		if ('alpha' in c_o)  {
+		if (c_o  &&  typeof c_o === 'object'  &&  'alpha' in c_o)  {
 			if (c_o.alpha === undefined)  {c_o.alpha=a;  return c_o;}
 			else if (this.multiplyAddOnAlpha)  {c_o.alpha=this.multiplyAddOnAlpha(c_o.alpha, a);  return c_o;}
 			else return this.onError('Can not apply add-on alpha; it is already set', source);  }
@@ -1006,10 +1002,8 @@ RGB_Calc.hueAngleUnitFactors=  //you may add to these …but replacing them alto
 		'rad':  {value: 2*Math.PI, enumerable: true},
 		"ᶜ":    {value: 2*Math.PI, enumerable: true},
 		"ᴿ":    {value: 2*Math.PI, enumerable: true},
-		"ʳ":    {value: 2*Math.PI, enumerable: true},
 		'grad': {value: 400,       enumerable: true},
 		'ᵍ':    {value: 400,       enumerable: true},
-		'ᴳ':    {value: 400,       enumerable: true},
 		"%":    {value: 100,       enumerable: true},
 		'turn': {value: 1,         enumerable: true},
 		"●":    {value: 1,         enumerable: true}  });
@@ -1093,8 +1087,8 @@ function shadeRGB(rgb)  { var i, min=255, max=0;
 RGB_Calc.to.hex=toHex;
 RGB_Calc.to.definer.quick.hex={value:toHex};
 RGB_Calc.to.definer.audit.hex={value: function() {return convertColor.call(this, arguments, toHex, 'hex');}};
-function toHex(rgb)  { return (this.config.useHexSymbol ? "#":'') +
-	Math._2hex(rgb[0])+Math._2hex(rgb[1])+Math._2hex(rgb[2]) + (typeof rgb[3] === 'number' ?  Math._2hex(rgb[3]) : "");  }
+function toHex(rgba)  { return (this.config.useHexSymbol ? "#":'') +
+	Math._2hex(rgba[0])+Math._2hex(rgba[1])+Math._2hex(rgba[2]) + (typeof rgba[3] === 'number' ?  Math._2hex(rgba[3]*255) : "");  }
 
 
 RGB_Calc.to.rgb=        //these are set up as pass-throughs for automated conversion calculations: i.e.  myRGB_calc.to[myOutputModel](color_data);
