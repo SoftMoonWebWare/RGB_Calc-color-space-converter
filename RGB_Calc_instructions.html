@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name='description' content='utility for color-space conversions'>
+<meta name='author' content='Joe Golembieski, SoftMoon-WebWare'>
+<meta name='copyright' content='Copyright © 2013, 2022, 2023 Joe Golembieski, SoftMoon-WebWare'>
+<title>RGB_Calc instructions from SoftMoon-WebWare</title>
+<link rel="icon" type="image/x-icon" href="images/SoftMoonWebWare.gif">
+<style type="text/css">
+body, header, main, aside, section, footer, figure, div, h1, h2, h4, h5, img, menu, li {
+	margin: 0;
+	padding: 0; }
+body {
+	min-width: 57em;
+	font-family: serif;
+	color: #000000;
+	background-color: #FFDEAD;
+	background-image:  /* SteelBlue */
+		linear-gradient(to right, #4682B4FF, 304px, #4682B400 800px),
+		linear-gradient(to bottom, #4682B4FF, 266px, #4682B400 700px),
+		linear-gradient(to top, #4682B4FF, 38px, #4682B400 100px);
+	}
+
+header h1 {
+	font-size: 1.618em;
+	font-weight: bold;
+	clear: both;
+	text-align: center;  }
+header h1:first-child {
+	font-family: sans-serif;
+	padding: .618em 1em 0 1em;
+	text-align: left; }
+header h1 span {
+	padding: 0 0 0 2.618em;
+	font-size: .764em }  /* ≈ Φ + ((1-Φ) - (1-Φ)*Φ) */
+
+header figure {
+	margin-left: .382rem;
+	float: left; }
+#logo {
+	opacity: .78;
+	font-size: 1.618em; /*for alt text*/
+	font-weight: bold;
+	line-height: 150%; }
+header figcaption {
+	font-size: 1.382em;
+	font-weight: bold;
+	text-align: center;
+	width: 27em; }
+header h1 span,
+header figcaption span {
+	display: block;
+	font-style: oblique; }
+
+main {
+	font-size: 1.236em;
+	text-align: center;
+	position: relative;
+	container: main / inline-size; }
+aside {
+	margin: .618em;
+	padding: 0;
+	display: inline-block;
+	width: 9em;  }
+@container main (width > 60em) 	 {
+		aside {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: auto;
+			right: auto; }
+}
+
+aside a {
+	display: block;
+	white-space: nowrap;
+	font-weight: bold;
+	font-size: 116%; }
+
+p {
+	padding: 0;
+	text-indent: .618em; }
+ul p {
+	text-indent: 0; }
+p + p,
+code.block + p,
+ul + p,
+dl + p {
+	margin-top: .618em; }
+
+p, ul, dl {
+	text-align: left;
+	max-width: 38.2em;
+	margin: 0 auto; }
+
+
+kbd {
+	display: inline-block;
+	text-indent: 0; }
+kbd span {
+	display: inline-block;
+	position: relative;
+	border: 1px solid #8080FF;
+	border-bottom: 2px solid #404080;
+	border-right: 2px solid #404080;
+	border-radius: 1.618em / 2em;
+	color: white;
+	background-color: #202040;
+	text-align: center;
+	margin: 0 .382em;
+	padding: 0 .618em;
+	font-size: 85.4%;
+	line-height: .854em;
+	vertical-align: center; }
+
+numerance,
+footmark {
+	font-size: .618em;
+	font-weight: normal;
+	vertical-align: top; }
+
+code {
+	text-align: left;
+	white-space: pre; }
+code.block {
+	display: inline-block;
+	max-width: 94%;
+	overflow: auto;
+	margin: .328em auto;
+	padding: 0 0 0 .382em;
+	border-left: 3px double lightSteelBlue; }
+dd code.block,
+li code.block {
+	display: block; }
+
+main > div {
+	margin: 2em 0; }
+
+ul {
+	list-style-type: disc;
+	list-style-position: outside; }
+
+dl { }
+dt {
+	font-weight: bold; }
+dd {
+	margin-left: 2em; }
+dd ul {
+	list-style-type: square; }
+
+div.help ul ul {
+	list-style-type: circle;
+	margin-right: 0; }
+div.help ul ul.keybrd {
+	list-style-type: none;
+	margin-left: 0; }
+div.help ul p {
+	margin: 0;
+	padding: 0; }
+div.help dd {
+	margin: 0 1.168em; }
+div.help li:nth-child(3) ul:first-child li kbd {
+	/* text shows XYZ limits */
+	padding-left: 1.382em; }
+
+dd table {
+	margin-bottom: .618em;
+	text-align: center;
+	border-collapse: separate; }
+dd th, dd td {
+	border: 1px solid; }
+dd caption, dd th {
+	background-color: lightGreen;
+	font-weight: bold; }
+dd th footmark { }
+
+
+div.object dt.internal code,
+div.object dt.stringFormat code,
+div.object code.internal,
+div.object span.internal {
+	background-color: #B0FFB0; }
+div.object dt.internal.audit code {
+	background-color: #D8FFD8; }
+div.object dt.static code,
+div.object dt.private code {
+	background-color: #FF80FF; }
+div.object dt.static.external code {
+	background-color: #FFD0FF; }
+div.object > dl + p {
+	margin-top: .38em; }
+
+
+footer p {
+	max-width: 100%;
+	text-indent: 0;
+	margin: 0 1.618em;
+	font-size: .78em;
+	font-weight: bold; }
+footer note {
+	margin-right: 2.618em; }
+footer note:last-child {
+	margin-right: 0; }
+
+.macronym {
+	display: inline;
+	font-size: .763924em;
+	vertical-align: .236076em;
+	line-height: 100%; }
+acronym.macronym {
+	font-size: .382em;
+	vertical-align: 1.1618em;
+	border-bottom: none; }
+mark {
+	color: inherit;
+	background-color: inherit; }
+</style>
+</head>
+<body>
+<header>
+<h1>Custom Web Software Development</h1>
+<figure>
+<img id='logo' src="images/SoftMoon-WebWare.gif" alt="SoftMoon-WebWare">
+<figcaption>JavaScript<mark class='macronym'>™</mark>, <abbr>HTML 5</abbr>, <abbr>CSS 4</abbr>, &amp; <abbr>PHP 8</abbr>:
+<span>Innovative Enterprise level Scripting for interactive sites, <acronym title='software as a service'>SaaS</acronym>, &amp; cross-platform desktop apps</span></figcaption>
+</figure>
+<h1><code>RGB_Calc</code> color-space conversion calculator</h1>
+</header>
+
+<main id='content'>
+
+<aside>Download it from:
+<a href='https://SoftMoon-WebWare.com/OpenSource.php'>our code vault</a>
+or Git it on GitHub:
+<a href='https://github.com/SoftMoonWebWare/RGB_Calc-color-space-converter'><code>RGB_Calc</code></a>
+</aside>
+
+<div class='intro'>
+	<p>The <code>RGB_Calc</code> Class was born of the need for speed, yet also the need to accommodate flexible input &amp; output formats.&nbsp;
+		In testing, I found using <code>Array</code>s to pass data in &amp; out provided the fastest execution times by far.&nbsp;
+		The predecessor of this class passed back only (custom) “color-<code>Object</code>s,”
+		and (if memory serves) it “processed” all input before actually converting any colors,
+		and when I replaced that previous class with this new <code>RGB_Calc</code> Class in my “MasterColorPicker” project
+		and configured this new Class to pass back simple <code>Array</code>s instead
+		(using the same conversion functions internally with about the same extraneous overhead),
+		maximum palette draw-time went from about 8.5 seconds to about 1.5 seconds (timed by eye/ear using the clicks on my analog wall-clock).&nbsp;
+		I was shocked (but happy☺) at the dramatic increase; I expected maybe 25%-100% faster times, but 700% faster is even better!</p>
+
+	<p>The <code>RGB_Calc</code> Class focuses on converting the
+		<abbr>sRGB</abbr> (standard Red-Green-Blue) color-<em>space</em>
+		to &amp; from various other color-<em>models</em>.&nbsp;
+		Note a color-<em>space</em> has defined limits to values — the sRGB color space limits each value to integers ranging from <kbd>0—255</kbd>.&nbsp;
+		In reality, colors could be more intense (have more Chroma), or more densely packed throughout the range of intensity,
+		but <kbd>255</kbd> is the limit that computers use.&nbsp;
+		A color-<em>model</em> does not define the values’ limits; however by definition of the individual models,
+		there are generally limits to the intensity (Chroma) of the colors.&nbsp;
+		So we generally define sRGB color-space-values like this: <kbd>(64, 128, 255)</kbd>,
+		but any color-</strong>model</strong> (including an RGB model) generally uses percent values like this <kbd>(25%, 50%, 100%)</kbd>;
+		or some use hue-angles which correlate to a percentage of distance around the circumference of a circle <kbd>(90deg, 50%, 100%)</kbd>.&nbsp;
+		By converting from color models using percents to a color-space, we are saying that the color-model we use has the same
+		limits of color-intensity (chroma) as the color-space.&nbsp;
+		Chroma, or color-intensity, should not be confused with brightness or luminance, though.&nbsp;
+		The mathematical color-space is then applied to the monitor, and every monitor has its own gamut;
+		that is the actual range of colors that the monitor will show, related to its contrast-ratio,
+		where generally speaking, the higher the contrast, the darker the black is, and the more bright and pure and less washed-out the colors appear.&nbsp;
+		This all gets more confusing as we try to compare computer monitors with real-life and
+		different wavelengths of light bouncing off different objects that reflect that wave in different ways,
+		and how the eye perceives color and vision in general,
+		and that is where this discussion leads…but not here.<p>
+
+	<p>To use the package, you must first create a couple of namespaces for it.&nbsp;
+		Typically, these namespaces are JavaScript<mark class='macronym'>™</mark> constants,
+		and are used by many of SoftMoon-WebWare’s various different library packages,
+		so they can’t all create the constant.&nbsp;
+		The <code>SoftMoon</code> namespace is our root, and it holds simple “universal” data
+		that different libraries may need.&nbsp;
+		The <code>SoftMoon.WebWare</code> namespace holds executable code.&nbsp;
+		Also, you need to create an <code>Array</code> for named-color-palette files to load themselves into
+		if you are hard-loading them with &lt;script&gt; tags
+		(<a href='#palettes'>▼more on that in the Palettes section below</a>).&nbsp;
+		If you are only loading palettes from a server
+		(using “ajax” via <code>SoftMoon.WebWare.loadPalettes()</code>),
+		or not at all, you don’t need the
+		<code>SoftMoon.loaded_palettes</code> property.&nbsp;
+		If you are not loading palettes from a server (using “ajax”), you do not need the <kbd>HTTP.js</kbd> file.&nbsp;
+		Don’t confuse the fact that you <strong>can</strong> load the palettes using &lt;script&gt; tags from a server
+		— but that is <strong>not</strong> using “ajax.”&nbsp;
+		The following <abbr>HTML</abbr> code will create the proper namespace <code>Objects</code>
+		and then load the code files and the <abbr>CSS</abbr> palette file:</p>
+
+	<code class='block'>&lt;script type='text/javascript'&gt;
+const SoftMoon={};
+Object.defineProperties(SoftMoon, {
+	WebWare: {value: {}, enumerable: true},
+	loaded_palettes: {value: [], enumerable: true}
+	});
+&lt;/script&gt;
+&lt;script type='text/javascript' src='JS_toolbucket/+++JS/+++.js' defer&gt;&lt;/script&gt;
+&lt;script type='text/javascript' src='JS_toolbucket/+++JS/+++Math.js' defer&gt;&lt;/script&gt;
+&lt;script type='text/javascript' src='JS_toolbucket/SoftMoon-WebWare/HTTP.js' defer&gt;&lt;/script&gt;
+&lt;script type='text/javascript' src='JS_toolbucket/SoftMoon-WebWare/RGB_Calc.js' defer&gt;&lt;/script&gt;
+&lt;script type='text/javascript' src='color_palettes/desktop_palettes/CSS4.palette.js'
+	defer onload='SoftMoon.WebWare.addPalette(SoftMoon.loaded_palettes.pop())'&gt;&lt;/script&gt;
+	</code>
+
+	<p>Once loaded, the <code>RGB_Calc</code> Class is already set up to give you access to all of the individual conversion functions.&nbsp;
+		These <a href='#quick-audit-mini'>▼<strong>“quick”</strong> functions</a> are tuned for maximum speed,
+		and are members of <code>RGB_Calc</code> so they depend being called as such to access the
+		configuration options: <code>RGB_Calc.config</code>.&nbsp;
+		They all require passing in an <code>Array</code> of “proper” values (see each function); that is,
+		converting from <abbr>sRGB</abbr> (→to→ any color-model) requires passing in values from <kbd>0—255</kbd>,
+		converting from other color-models typically (but not by all)
+		requires passing in factor-values from <kbd>0.0—1.0</kbd>,
+		and “improper” input values yield undefined results;
+		they are not checked for “improper” values, as this slows the calculator.</p>
+
+	<code class='block'>const RGB_Calc=SoftMoon.WebWare.RGB_Calc;
+const c1=RGB_Calc.from.hsl([0.3, 0.5, 0.84]);
+// By default, the returned value is a custom  RGBA_Color  object;
+// its  .toString('css')  method yields: "RGB(202, 235, 194)"
+console.log(c1);
+const c2=RGB_Calc.to.hsl([202, 235, 194]);
+// By default, the returned value is a custom  HSLA_Color  object;
+// its  .toString('wrap deg percent')  method yields: "HSL(108.29deg, 50.61728%, 84.11765%)"
+console.log(c2);
+// Note the slight difference in conversion values;
+// this is because RGBA_Color objects’ .toString() method has rounded the resulting RGB values to integers.
+// To find the precision RGB values
+// **when the calculator’s configuration options do NOT round the RGB result**:
+console.log(c1.rgb)  // ←yields an Array
+// We can also get conversion values returned in a simple Array or YOUR custom Class object.
+// To temporarily change a configuration value:
+RGB_Calc.config.stack({RGBA_Factory: {value:Array}});  // with .stack(), the passed value must be a properties descriptor
+const c3=RGB_Calc.from.hsl([0.3, 0.5, 0.84]);  // ←c3 is a native JavaScript Array, not an RGBA_Color object
+// (note we can also directly change config values without having first .stack()ed if we want them to be more permanent)
+RGB_Calc.config.RGBA_Factory=MyCustomColorClass;  // this should point to YOUR constructor function
+const c4=RGB_Calc.from.hsl([0.3, 0.5, 0.84]);  // ←c4 is an instance of MyCustomColorClass
+RGB_Calc.config.cull();  // now the RGBA_Factory is whatever it was before we .stack()ed</code>
+
+	<p>For all calculators, both <strong>“quick”</strong> and <strong>“auditing”</strong> types,
+		values returned (in whatever Object) are always in the “byte” range of <samp>0-255</samp> for
+		the <abbr>RGB</abbr> color-space (they may be numeric-floats if <code>.config.roundRGB==false</code>,
+		so we can’t exactly call them “bytes” or call this the <abbr>sRGB</abbr> color-space);
+		and factors from <samp>0.0–1.0</samp> for all other color-models.</p>
+
+	<p>Besides being a simple stand-alone static-functional class,
+		<code>RGB_Calc</code> is also a Class constructor to create new “calculators” with their own set of options.&nbsp;
+		But the calculators you can construct can offer greater input flexibility, specifically, but not limited to,
+		the ability to <strong>“audit”</strong> (interpret) a <code>String</code> similar to a <abbr>CSS</abbr> color-definition;
+		except it can interpret any color-model that <code>RGB_Calc</code>
+		is set-up to convert (you can plug-in your own and extend it),
+		as well as <a href='#palettes'>▼“named-colors” from any of the “palettes”</a> that are loaded.&nbsp;
+		The individual <a href='#quick-audit-mini'>▼<strong>“audit”</strong> conversion functions</a> can accept
+		a single <code>String</code> with the values separated by commas and/or spaces,
+		or an <code>Array</code> of values in either <code>String</code> or numeric (<code>Number</code>) format.&nbsp;
+		They generally (except see special option <code>RGB_Calc.config.inputAsFactor</code>)
+		accept values with limits that a <abbr>CSS</abbr> definition would impose:
+		i.e. <kbd>0</kbd>–<kbd>255</kbd> for sRGB, and <kbd>0%</kbd>–<kbd>100%</kbd> for others,
+		or for hue-angles, any value is accepted and automatically transformed into a standard angle
+		(since angles are circular, 45° = 405° = −335°).&nbsp;
+		Any value outside the limits will not be accepted, and may throw an <code>Error</code> if you choose
+		(see <code>RGB_Calc.config.onError</code>).
+		Besides the individual conversion functions, a newly constructed “audit” <code>RGB_Calc</code> Class object
+		offers a “general input” interpreter that interprets just about any format you throw at it and returns
+		the <abbr>RGBA</abbr> values in the <code>Object</code> of your choice;
+		an explanation of the <code>String</code> values it can interpret follows the code examples:
+	</p>
+	<code class='block'>const myCalc=new SoftMoon.WebWare.RGB_Calc;
+const c1=myCalc( "HSL(0.3turn, 50%, 84%)" );
+// By default, the returned value is a custom  RGBA_Color  object;
+// its .toString('css') method yields: "RGB(202, 235, 194)"
+console.log(c1);
+
+const c2=myCalc.to.hsl( "CMYK(14.0255%, 0%, 17.44681%, 7.84314%)" );
+// Here, the CMYK color is converted to RGB internally, and then to HSL.
+// RGB values may be rounded if myCalc.config.roundRGB=true
+// and this can affect the final HSL conversion values slightly.
+// Note that rounding the RGB values makes the
+// final HSL values a true representation of the sRGB color-space.
+// By default, the returned value is a custom  HSLA_Color  object;
+// its .toString('css') method yields: "HSL(108.29deg, 50.61728%, 84.11765%)"
+console.log(c2);
+
+const c3=myCalc.from.hsl("108.29deg, 50.61728%, 84.11765%");
+// By default, the returned value is a custom  RGBA_Color  object;
+// its .toString('css') method yields: "RGB(202, 235, 194)"
+console.log(c3);
+
+// you can even leave out the units:
+// “audit” calculators by default use percents not factors (except for RGB uses bytes!)
+// except for hue-angles use the unit in myCalc.config.hueAngleUnit ("deg" by default)
+// UNLESS myCalc.config.inputAsFactor=true  ←then ALL values are considered factors (0.0–0.1)
+const c4=myCalc.from.hsl("108.29, 50.61728, 84.11765");
+console.log(c4);
+
+myCalc.config.inputAsFactor=true;  // we can also use .config.stack(…)
+const c5=myCalc.from.hsl("0.3, 0.5, 84%")  //←all values are factors, except 84% because it has a qualifier!
+const c6=myCalc.from.hsl([0.3, 0.5, "84%"])  //←we can even pass an array of numeric and/or string values
+
+// Just like the “quick-calc” examples above, we can also get conversion values
+// returned in a simple Array or YOUR custom Class object
+// using  myCalc.config.stack()
+// or by changing  myCalc.config.  values directly.</code>
+</div>
+
+<div class='help'>
+	<h4>Valid <code>String</code> values for colors include:</h4>
+	<ul>
+		<li>RGB values in hexadecimal (<abbr title='also known as'>a.k.a.</abbr> <abbr>hex</abbr>) with or without the leading <kbd>#</kbd> symbol.</li>
+		<li>RGB values as:
+			<ul>
+				<li>integer byte values (<kbd>0—255</kbd>)</li>
+				<li>percent ratios (<kbd>0%—100%</kbd> — ¡be sure to use the percent <kbd>%</kbd> symbol with <abbr>RGB</abbr> values!)</li>
+			</ul>
+				<p>Each value may be separated by spaces/commas.&nbsp;
+				You may wrap() or prefix: the values with <kbd>rgb( )</kbd> or <kbd>rgb:</kbd> but that is not necessary.</p></li>
+		<li>various different color-space models including:
+			<ul>
+				<li>CMYK</li>
+				<li>CMY</li>
+				<li>HSV / HSB</li>
+				<li>HSL</li>
+				<li>HCG</li>
+				<li>Hue ←&nbsp; define only a hue-angle-value and see the full-color (fully chromatic) tone of the hue.</li>
+				<li>XYZ →&nbsp; (Observer = 2°, Illuminant = D65) <kbd>0 ≤ X ≤ 95.047</kbd>, <kbd>0 ≤ Y ≤ 100</kbd>, <kbd>0 ≤ Z ≤ 108.883</kbd></li>
+			</ul>
+				<p>Use models by wrapping() or prefixing: their given values.&nbsp;
+				Values are given as percent ratios (<kbd>0%—100%</kbd> with or without the percent sign %);
+				except Hue values are given in angular values using one of the following units:
+				(the default unit used when none is specified is found in an <code>RGB_Calc</code> object’s <code>.config.hueAngleUnit</code> property)</p>
+			<ul>
+				<li>in degrees (<kbd>0°—360°</kbd> ← post-fixed using the <kbd>°</kbd> symbol or “<kbd>deg</kbd>”).</li>
+				<li>in radians (<kbd>0ᴿ–2πᴿ≈6.2831853ᴿ</kbd> ← post-fixed using the <kbd>ᴿ</kbd> symbol, the <kbd>ᶜ</kbd> symbol, or “<kbd>rad</kbd>”).</li>
+				<li>in gradians (<kbd>0ᵍ—400ᵍ</kbd> ← post-fixed using the <kbd>ᵍ</kbd> symbol or “<kbd>grad</kbd>”).</li>
+				<li>in % of a turn (<kbd>0%—100%</kbd> ← post-fixed using the <kbd>%</kbd> symbol).</li>
+				<li>of a turn (<kbd>0●—1●</kbd> ← post-fixed using the <kbd>●</kbd> symbol or “<kbd>turn</kbd>”).</li>
+			</ul></li>
+		<li>Any of the available <a href='#palettes'>▼named “palette” colors</a>.&nbsp;
+				Colors should be prefixed: or wrapped() with the appropriate color-palette name;
+				except <abbr>CSS</abbr> colors do not need to be wrapped or prefixed by default.&nbsp;
+				(The default color-palette name can be found and changed at <code>SoftMoon.defaultPalette</code>)&nbsp;
+				“Named color” palettes may have sub-palettes; you may or may not need to include the sub-palette name
+				in your color-spec, depending on the palette.&nbsp;
+				Generally, if all the colors in the parent palette and its sub-palettes have different names,
+				no sub-palette is required in the spec.&nbsp;
+				<code class='block'>ANSI: 35
+ANSI: 8-bit: shades and tones: 35</code>
+		</li>
+	</ul>
+	<p>You may specify opacity (the opposite of transparency) in any of the color space models
+			(RGB, CMYK, CMY, HSV, HSL, HCG, HWB, Hue)
+			by adding an additional factor (0-1) or percent (0%-100% ← you must use the percent % sign).&nbsp;
+			This is called the “Alpha” channel in technical terms.&nbsp;
+			The color-space model names may or may not end with an additional “A” (for example, RGB vs. RGBA).
+			Per CSS4 specifications, the opacity value may also be separated with a <kbd>/</kbd> symbol
+			that is itself preceded and followed by a space;
+			for example <kbd>RGBA(0, 153, 255 / 62%)</kbd>&nbsp;
+			Note the “loose” interpretation of CSS specs allows commas with the <kbd>/</kbd> alpha separator.
+			Hex-RGB values may have an additional 2 hex digits to specify the alpha;
+			for example <kbd>#ADDCAD80</kbd>&nbsp;
+			Named colors may use the same Alpha specification for color space models described above,
+			but it must end with either a semicolon <kbd>;</kbd> or a space followed by <kbd>opacity;</kbd>&nbsp;
+			For examples:</p>
+	<ul>
+		<li><kbd>Green 30%;</kbd></li>
+		<li><kbd>DodgerBlue, 78%;</kbd></li>
+		<li><kbd>ANSI: 35 / .84 opacity;</kbd></li>
+	</ul>
+	<p>Note that named colors may already have and Alpha value, and if you “add on” another Alpha value as shown above,
+			it will be multiplied by the color’s existing one.&nbsp;  For example, if a named-color already has
+			an Alpha value of 50%, and you add on another 50% Alpha, the final Alpha value is 25%.&nbsp;
+			You can forbid this action using <code>myCalc.config.forbidAddOnAlpha=true;</code>
+			(or by using <code>myCalc.config.stack({forbidAddOnAlpha:{value:true}});</code>).</p>
+	<h5>Examples:</h5>
+	<ul>
+		<li>These all give the same <span style='color: red;'>red</span> color:
+			<ul>
+				<li><kbd>255 0 0</kbd></li>
+				<li><kbd>rgb (255 0 0)</kbd></li>
+				<li><kbd>rgb(255, 0 0)</kbd></li>
+				<li><kbd>#FF000</kbd></li>
+				<li><kbd>ff0000</kbd></li>
+				<li><kbd>HCG(0deg, 100, 50)</kbd></li>
+				<li><kbd>HSL: 0°, 100%, 50%</kbd></li>
+				<li><kbd>HSV: 0° 100% 100</kbd></li>
+				<li><kbd>red</kbd></li>
+				<li><kbd>CSS: red</kbd></li>
+				<li><kbd>X11( RED )</kbd></li>
+			</ul>
+		</li>
+		<li>These all give the same <span style='color: lightSkyBlue;'>blueish</span> color:
+			<ul>
+				<li><kbd>135, 206, 250</kbd></li>
+				<li><kbd>RGB (135, 206, 250)</kbd></li>
+				<li><kbd>RGB: 135, 206, 250</kbd></li>
+				<li><kbd>#87cefa</kbd></li>
+				<li><kbd>87ceFA</kbd></li>
+				<li><kbd>hcg(202.96deg, 45.098% 96.429%)</kbd></li>
+				<li><kbd>hsl:56.3768%,92,75.49</kbd></li>
+				<li><kbd>hsv ( .563768turn  46%  98.039% )</kbd></li>
+				<li><kbd>lightSkyBlue</kbd></li>
+				<li><kbd>css (LiGHTSKyBLue)</kbd></li>
+				<li><kbd>X11:lIghtskYblUE</kbd></li>
+			</ul>
+		</li>
+	</ul>
+</div><!--  close  help  -->
+
+<div class='object'>
+	<h4>The properties &amp; methods of the <code>RGB_Calc</code> object, and its class instances</h4>
+	<h3><code>RGB_Calc</code></h3>
+	<dl>
+		<dt><code>.config</code></dt>
+				<dd>holds this calculator’s configuration options.&nbsp;
+				It is an instance of the <a href='#ConfigStack'><code>▼RGB_Calc.ConfigStack</code></a> Class.</dd>
+		<dt><code>.to</code></dt>
+				<dd>holds functions converting sRGB to other color-models.</dd>
+		<dt><code>.from</code></dt>
+				<dd>holds functions converting from other color-models to sRGB.</dd>
+		<dt><code>.install()</code></dd>
+				<dd>Used to install different conversion functions “on the fly,”
+				such as when there are two different color-blind filters available, etc.</dd>
+		<dt class='internal'><code>.outputRGB()</code></dt>
+				<dd>filters all sRGB output, according to this calculator’s
+				<code>.config.roundRGB</code> flag and returns the output using the
+				object-constructor defined by this calculator’s <code>.config.RGBA_Factory</code></dd>
+		<dt class='internal'><code>.getByte()</code></dt>
+				<dd>filters sRGB input and guarantees results from <kbd>0—255</kbd></dd>
+		<dt class='internal'><code>.getFactor()</code></dt>
+				<dd>filters input and returns a factor from <kbd>0—1</kbd>,
+				or <code>false</code> if the value is out-of-range.&nbsp;
+				Input may be a string or number, and may be a percent (0-100),
+				or already a factor if <code>.config.inputAsFactor</code> is true;
+				but strings with a <code>%</code> qualifier at the end are always considered percents.</dd>
+		<dt class='internal'><code>.getHueFactor()</code></dt>
+				<dd>filters input and returns a factor from <kbd>0—1</kbd>;
+				note hue-angles are circular, so no value is out-of-range.&nbsp;
+				The conversion factor is determined by <code>.config.hueAngleUnit</code>
+				or the value may already a factor if <code>.config.inputAsFactor</code> is true;
+				but strings with a hue-angle-unit qualifier at the end respect that conversion factor.&nbsp;
+				If the hue-angle-unit is not recognized, this function returns <code>false</code>.</dd>
+		<dt class='internal'><code>.getAlpha()</code></dt>
+				<dd>filters input and returns a factor from <kbd>0—1</kbd>,
+				or <code>false</code> if the value is out-of-range.&nbsp;
+				Input may be a string or number.&nbsp;
+				Input values are considered factors from <code>0.0</code>–<code>1.0</code> unless they have <code>%</code> qualifiers.</dd>
+		<dt class='internal'><code>.factorize()</code></dt>
+				<dd>filters an <code>Array</code> of values using <code>this.getFactor()</code>,
+				<code>this.getHueFactor()</code>, and <code>this.getAlpha()</code>,
+				and returns either:
+				<ul>
+				<li>a new <code>Array</code> (with the factorized values) when <code>.config.preserveInputArrays=true</code></li>
+				<li>the same <code>Array</code> (with the modified values) when <code>.config.preserveInputArrays=false</code></li>
+				<li><code>false</code> if <code>.getFactor()</code> or <code>this.getHueFactor()</code> or <code>.getAlpha()</code>
+					returns <code>false</code></li>
+				</ul></dd>
+		<dt class='internal'><code>.applyAlpha()</code></dt>
+				<dd>This function applies an alpha value to a given color-object.&nbsp;
+				The two Alpha values are multiplied according to the
+				formula in <code>multiplyAddOnAlpha()</code> (see below).&nbsp;
+				It is used when you pass a “named-color” to an “auditing” calculator,
+				and you specify an “add-on” Alpha value to a color that already has an Alpha value.&nbsp;
+				For example: <kbd>skyPalette: clouds / 84% opacity;</kbd>&nbsp;
+				Suppose this color (<kbd>skyPalette: clouds</kbd>) is a partly transparent blueish-graytone: <kbd>RGB(50%, 55%, 70%, 80%)</kbd>&nbsp;
+				Then the final alpha result is (by the default formula): <code>80% × 84% = 67.2%</code><br>
+				If you use your own custom color-objects for <abbr>RGB</abbr> calculator output,
+				you may need to update or replace this function to work with them,
+				if they don’t have an <code>.alpha</code> property,
+				and they are not an <code>Array</code> or a child-class of <code>Array</code>.</dd>
+		<dt class='internal'><code>.multiplyAddOnAlpha()</code></dt>
+				<dd>This function takes two alpha values and multiples them according to a specific formula.&nbsp;
+				You may modify the formula to suit your needs by replacing this function.</dd>
+		<dt class='internal'><code>.convertColor()</code></dt>
+				<dd>used by “audit” <code>.to</code> functions to interpret the given color
+				using the “catch-all” function (see <code>.$()</code> below)
+				and convert it to sRGB before further converting to the final format.</dd>
+		<dt class='internal audit'><code>.$()</code></dt>
+				<dd>This is only found on “audit” instances of the <code>RGB_Calc</code> class
+				and is a mirror of the “catch-all” function that is the central to that class.&nbsp;
+				In other words:
+<code class='block'>var rgb, myCalc = new SoftMoon.WebWare.RGB_Calc();
+rgb=myCalc('red')  //the easy preferred way
+rgb=mycalc.$('red')  //the long way
+</code>
+				This allows methods of an “audit” <code>RGB_Calc.to</code> Class instance to access the “catch-all.”</dd>
+		<dt class='static'><code>.ConfigStack</code></dt>
+				<dd>constructor (static property of <code>RGB_Calc</code> only)</dd>
+		<dt class='static'><code>.hueAngleUnitFactors</code></dt>
+				<dd>data table (static property of <code>RGB_Calc</code> only)</dd>
+		<dt class='static external'><code>.colorblindProviders</code></dt>
+				<dd>table of color-blind filter-functions and their meta-data. (static property of <code>RGB_Calc</code> only,
+				and only present when an external color-blind filter provider file is present)</dd>
+	</dl>
+</div>
+<div class='help'>
+	<p>In general, only the first 4 listed properties of <code>RGB_Calc</code> (above)
+		are used, and in common use, only the first 3 listed.&nbsp;
+		There are 2 different color-blind filters currently available for the <code>RGB_Calc</code> Class library.&nbsp;
+		Both install themselves as <code>RGB_Calc.to.colorblind()</code> methods;
+		but only one can work at a time.&nbsp;
+		They also install their meta-data in the static <code>RGB_Calc.colorblindProviders</code> property.&nbsp;
+		You can use <code>RGB_Calc.install('colorblind', 'Rigden')</code>
+		or <code>RGB_Calc.install('colorblind', 'Wickline')</code>,
+		and the filter you choose will become the one that is active,
+		not only in <code>RGB_Calc.to</code> but in all <strong>future</strong> calculators
+		constructed (using for example <code>myCalc = new RGB_Calc();</code>).
+		If you use, for example <code>myCalc.install('colorblind', 'Rigden')</code> then
+		the colorblind filter you install will only take affect on that individual instance
+		of the <code>RGB_Calc</code> Class.</p>
+	<p>The <code>RGB_Calc.to</code> and <code>RGB_Calc.from</code> methods are all lowercase,
+		and the <code>RGB_Calc.from</code> methods <em>must</em> be for
+		the “catch-all” <code>String</code> filtering function to recognize them.&nbsp;
+		You may add to them as you wish.&nbsp;
+		The format makes programming with them simple &amp; easy to de-localize,
+		allowing, for examples: <code>RGB_Calc.from[model]</code> or <code>myCalc.to[model]</code>.</p>
+	<p>The <code>RGB_Calc.to</code> and <code>RGB_Calc.from</code> objects have as their prototype
+		the calculator they are attached to.&nbsp;
+		That means that the prototype of <code>RGB_Calc.to</code> or <code>RGB_Calc.from</code> is itself <code>RGB_Calc</code>.&nbsp;
+		Likewise, when you construct a custom calculator: <code>const myCalc = new RGB_Calc()</code>
+		the objects <code>myCalc.to</code> and <code>myCalc.from</code> have as their prototypes <code>myCalc</code>.&nbsp;
+		Therefore, any of the methods of <code>RGB_Calc.to</code>
+		or <code>RGB_Calc.from</code> (or similar to newly constructed calculators)
+    can refer to <code>this.config</code> and assess the <code>ConfigStack</code> instance
+		for the given calculator.</p>
+	<p>The other <code>RGB_Calc</code> <span class='internal'>methods</span> are all hooks to functions that are used internally.&nbsp;
+		These hooks are for plug-ins to the <code>RGB_Calc</code> Class to access.&nbsp;
+		You may use these hooks or hack them as you wish, but generally you need not worry about them.</p>
+	<p>Finally, the last 3 properties listed above of <code>RGB_Calc</code> are static properties
+		and are not included with class instances.&nbsp;
+		They are also available for your hacking or other use, but the <code>RGB_Calc.ConfigStack</code> constructor
+		and its <code>.prototype</code> need special attention.&nbsp;</p>
+	<p>Every calculator gets its own instance of an <code>RGB_Calc.ConfigStack</code>
+		constructed object for its <code>.config</code> property,
+		and every <code>RGB_Calc.ConfigStack</code> instance is “attached” to its calculator.&nbsp;
+		Also, every custom Color <code>Object</code> (<code>RGBA_Color</code>s, <code>ColorWheel_Color</code>s, &amp; <code>CMYKA_Color</code>s)
+		gets its own <code>ConfigStack</code>, and those stacks each may have different defaults for each type of custom Color <code>Object</code>.&nbsp;
+		The “ConfigStack” has in its prototype all the default configuration values and special methods.&nbsp;
+		You can easily change the values in any individual calculator or Color <code>Object</code> without affecting the others,
+		for example <code>RGB_Calc.config.roundRGB=true;</code>.&nbsp;
+		But the “ConfigStack” is a prototype-stack with methods to add to and remove from the stack:
+		specifically <code>RGB_Calc.config.stack()</code> and <code>RGB_Calc.config.cull()</code>.&nbsp;
+		When you <code>.stack()</code>, the “Stack” adds another new <code>Object</code>
+		to its own top-level making itself the prototype of this new <code>Object</code>,
+		and re-points its calculator’s <code>.config</code> property to this new <code>Object</code>.&nbsp;
+		(Remember, when JavaScript<mark class='macronym'>™</mark> looks for a property of an object and doesn’t find it there,
+		it looks in that object’s prototype and then recursively the prototype’s prototype until it finds the property;
+		this makes native JavaScript<mark class='macronym'>™</mark> Objects an ideal container for configuration values!)&nbsp;
+		Then you can change the configuration values as you like to temporarily suit your needs,
+		then use <code>.config.cull()</code> to return to the previous configuration values.&nbsp;
+		To make it even easier, <code>.config.stack()</code> accepts a parameter that is a JavaScript<mark class='macronym'>™</mark>
+		Object-Properties-Definer (see a good
+		<a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties'>►JavaScript<mark class='macronym'>™</mark> reference</a>):
+		for example <code>myCalc.config.stack({roundRGB:{value:false}, RGBA_Factory:{value:Array}});</code>.&nbsp;
+		In this way, you can temporarily modify individual configuration value(s) for an individual calculator
+		and then restore the original value(s), quickly and easily without having to keep track of said original value(s).&nbsp;
+		You can use <code>.config.stack()</code> multiple times and build the “ConfigStack”
+		to as many levels as you need; the <code>.config.reset()</code> method will remove
+		all the <code>Objects</code> stacked for the given calculator’s configuration.&nbsp;</p>
+
+	<p>For any calculator, you don't need to <code>.stack()</code> the <code>.config</code>
+		to temporarily change the config values if you only use defaults in your calculator instance,
+		as the defaults are in the prototype.  However, if you pass a <code>.config</code> descriptor
+		object to the <code>RGB_Calc</code> constructor, those values <strong>are</strong>
+		stored in the top level of your ConfigStack, and modifying the <code>.config</code> directly modifies them.&nbsp;
+		Using <code>delete</code> as shown below is faster and convenient if you only
+		want to temporarily change one or maybe two values.&nbsp;
+		Using it with many values may be slower and clutters your codespace —
+		that’s why <code>.stack()</code> and <code>.cull()</code> were included.</p>
+
+	<code class='block'>const myCalc=new SoftMoon.WebWare.RGB_Calc({hueAngleUnit:'grad'});
+myCalc.from.hsv("34, 95, 45");  // input as gradians &amp; percents by this calc’s current default
+myCalc.config.inputAsFactor=true;
+myCalc.from.hsv("34grad, .95, .45");  // input as gradians &amp; factors by this calc’s current default
+delete myCalc.config.inputAsFactor;  // now the .config value goes back to the old default, faster than .stack() &amp; .cull()
+myCalc.config.hueAngleUnit='rad';  // we can never go back to "grad" - if we delete this value, the prototype value is used
+myCalc.config.stack();  // if we did this first (after we created the calculator) all values could be preserved using delete</code>
+
+	<p>There is also a flag to <code>.config.resetConfigStackOnThrownError</code> when using the standard
+		<code>.config.onError()</code> handler.
+			However, now-a-days it is considered best practice to use a <code>try {…} finally {…}</code>
+			code-block (this config option was developed for legacy dinosaur browsers,
+			but it still may simplify your complex coding schemes).&nbsp;
+			Note using <code>try {…} finally {…}</code> also covers your script’s butt if a native JavaScript<mark class='macronym'>™</mark> Error occurs
+			(none now known to exist) in the RGB_Calc code itself.</p>
+<code class='block'>const myCalc=new SoftMoon.WebWare.RGB_Calc;
+document.querySelector('input#userColor').attachEventListener('change', function()
+  {
+  myCalc.config.stack({throwErrors: {value:true}});
+  try {doItAgainAndAgain(this.value);}  // if the user-input is in error, an Error is thrown and console outputs once here …
+  catch(e) {console.error('we had an error with the color:',e);}  // … … … and a second time here
+  //we ALWAYS want to clean up the stack, but since any Errors are caught above, we really don’t need “finally” below
+  finally {myCalc.config.cull();}
+  }  );
+function doItAgainAndAgain(userInput)
+  {
+  const c1=myCalc.to.hsl('RGB: 234,127,35');
+  console.log(c1);  //outputs from the standard HSLA_Color object: HSL(27.74deg, 82.57261%, 52.7451%)
+  myCalc.config.stack({HSLA_Factory: {value:Array}});
+  try {
+    const c2=myCalc.to.hsl(userInput);
+    console.log(c2);  //outputs from the Array object, or “null.” (“red” is): Array(3) [ 0, 0.5, 1 ]
+    }
+  //we ALWAYS want to clean up the stack, or if an error is thrown in the above calculator,
+  //the stack will still have the HSLA_Factory as an Array next time we use this function or this calculator.
+  finally {myCalc.config.cull();}
+  }
+doItAgainAndAgain('red');  // no errors here - console outputs twice
+doItAgainAndAgain('foo-bar');  // an error but it is not thrown - console outputs twice, second is "null"</code>
+
+	<p>There is no reason you can’t also change the <code>ConfigStack.prototype</code> itself.&nbsp;
+		As is with JavaScript<mark class='macronym'>™</mark>,
+		this will modify the <em>default</em> configuration values for <strong>all</strong>
+		calculators: the basic <code>RGB_Calc</code> itself, as well any constructed in the past or future.</p>
+</div>
+
+<div class='object' id='ConfigStack'>
+	<h4>Recognized properties &amp; methods of a <code>ConfigStack</code> instance:</h4>
+	<h3><code>ConfigStack</code></h3>
+	<dl>
+		<dt><code>.reflect</code></dt>
+		<dd>For the RGB color model, depending on this Boolean flag,
+			values passed in outside the range of <kbd>0—255</kbd> are either “reflected” or “clamped” back into the correct range.</dd>
+
+		<dt><code>.roundRGB</code></dt>
+		<dd>For the RGB color model, depending on this Boolean flag,
+			values may be rounded to integers or left as floating-points.</dd>
+
+		<dt><code>.inputShortHex</code></dt>
+		<dd>When <code>true</code>, “audit” functions can recognize 3- or 4-digit hex values as valid colors.&nbsp;
+			When <code>false</code>, only 6- and 8-digit hex values are valid colors</dd>
+
+		<dt><code>.inputAsFactor</code></dt>
+		<dd>When <code>true</code>, all “audit” functions interpret input values as factors from <kbd>0—1</kbd>;
+			except string based values with unit qualifiers (i.e. a percent sign % or a Hue-Angle-Unit);
+			and also except <code>Number</code> object instances with a <code>.unit</code> property
+			that qualifies another unit:
+			<code class='block'>class Hue extends Number {}
+Hue.prototype.unit="deg";
+const h=new Hue(78);
+const s=new Number(50);
+s.unit="%";
+const red=new Number(0.37);
+red.unit='factor';
+// did you know Number instances work exactly like primitive numbers
+// except they can carry meta-data:
+console.log(h.unit);  //deg
+console.log(h*s);  //3900
+console.log((h-4)*(h+4));  //6068
+console.log(red.unit);  //factor
+const foo=3;
+foo.bar='baz';  //not an error but…
+console.log(foo.bar)  //undefined</code>
+			When <code>false</code>, all “audit” functions take by default (float)bytes for <abbr>RGB</abbr>,
+			and percents and whatever <code>.config.hueAngleUnit</code> is for the other color-models.&nbsp;
+			Remember, all “quick” calculator functions always take inputs as (float)bytes or factors; there is no other option.</dd>
+
+		<dt><code>.hueAngleUnit</code></dt>
+		<dd>Default input unit when none is specified in “audit” functions and <code>ColorWheel_Color Objects</code>;
+			also default output unit for <code>ColorWheel_Color Objects</code>
+			(<abbr>HSL</abbr>, <abbr>HSV</abbr>, <abbr>HSB</abbr>, <abbr>HCG</abbr>, and <abbr>HWB</abbr>).&nbsp;
+		Valid units are listed as the property keys of <code>RGB_Calc.hueAngleUnitFactors</code>.&nbsp;
+		The <code>.hueAngleUnit</code> default is overridden by <code>.inputAsfactor</code> (see above)
+		when input values have undeclared units.</dd>
+
+		<dt><code>.useHexSymbol</code></dt>
+		<dd>When outputting <abbr>RGB</abbr> Hex values, this Boolean flag determines the format.&nbsp;
+			For example: <kbd>A1B2C3</kbd>  <abbr title='versus'>vs.</abbr>  <kbd>#A1B2C3</kbd></dd>
+
+		<dt><code>.preserveInputArrays</code></dt>
+		<dd>When you pass an <code>Array</code> into an <strong>“audit”</strong> calculator,
+			it will interpret the values and may convert them into factors from <code>0–1</code>.&nbsp;
+			You may want to have access to those converted values,
+			or you may want to preserve the original values: your choice.&nbsp;
+			<abbr>RGB</abbr> <code>Arrays</code> are always preserved.</dd>
+
+		<dt><code>.defaultAlpha</code></dt>
+		<dd>When a calculator’s method, or an <code>RGBA_Color</code> constructor, a <code>ColorWheel_Color</code> constructor,
+			or a <code>CMYKA_Color</code> constructor gets passed an <code>undefined</code> Alpha value,
+			this value is used instead.&nbsp; It may be anything, including <code>undefined</code> also.&nbsp;
+			However, these color-objects, once constructed, may have any value directly set for the Alpha,
+			including <code>undefined</code>, and this default is ignored.&nbsp;
+			Also, these color objects’ <code>.toString()</code> methods, when told to force an Alpha output,
+			will output a default Alpha value of <code>100%</code>
+			if both their Alpha values and their <code>.config.defaultAlpha</code> are <strong>not numeric</strong>.&nbsp;
+			Note that when a calculator outputs, it will not output <code>undefined</code>
+			Alpha values; when using <code>Array</code>s as an output object (see the “Factory” pointers below)
+			its <code>.length</code> value will reflect that omission.</dd>
+
+		<dt><code>.forbidAddOnAlpha</code></dt>
+		<dd>For named (palette) colors
+			we can forbid (or allow) an add-on alpha or not according to this Boolean value
+			(<code>true</code> / <code>false</code>).&nbsp;
+			If a named color’s value is <kbd>RGBA(50%, 55%, 70%, 80%)</kbd>
+			and it is in the “Sky” palette and its name is “clouds”
+			auditing calculators can use the following spec:
+			<kbd>Sky: clouds / 84% opacity;</kbd>&nbsp;
+			Using the default alpha-multiplier function (<code>RGB_Calc.multiplyAddOnAlpha()</code>) the final
+			alpha value will be 80% × 84% = 67.2%</dd>
+
+		<dt><code>.RGBA_Factory</code></dt>
+		<dd>Pointer to the constructor for the output <code>Object</code> holding RGB values.&nbsp;
+		You may want to use <code>Array</code> or <code>SoftMoon.WebWare.RGBA_Color</code>,
+		or create your own Class constructor for any of these Factories.</dd>
+
+		<dt><code>.HSLA_Factory</code></dt>
+		<dd>Pointer to the constructor for the output <code>Object</code> holding HSL values.&nbsp;
+		You may want to use <code>Array</code> or <code>SoftMoon.WebWare.HSLA_Color</code>,
+		or create your own Class constructor for any of these Factories.</dd>
+
+		<dt><code>.HSBA_Factory</code></dt>
+		<dd>Pointer to the constructor for the output <code>Object</code> holding HSB values.&nbsp;
+		You may want to use <code>Array</code> or <code>SoftMoon.WebWare.HSBA_Color</code>,
+		or create your own Class constructor for any of these Factories.</dd>
+
+		<dt><code>.HSVA_Factory</code></dt>
+		<dd>Pointer to the constructor for the output <code>Object</code> holding HSV values.&nbsp;
+		You may want to use <code>Array</code> or <code>SoftMoon.WebWare.HSVA_Color</code>,
+		or create your own Class constructor for any of these Factories.</dd>
+
+		<dt><code>.HCGA_Factory</code></dt>
+		<dd>Pointer to the constructor for the output <code>Object</code> holding HCG values.&nbsp;
+		You may want to use <code>Array</code> or <code>SoftMoon.WebWare.HCGA_Color</code>,
+		or create your own Class constructor for any of these Factories.</dd>
+
+		<dt><code>.HWBA_Factory</code></dt>
+		<dd>Pointer to the constructor for the output <code>Object</code> holding HWB values.&nbsp;
+		You may want to use <code>Array</code> or <code>SoftMoon.WebWare.HWBA_Color</code>,
+		or create your own Class constructor for any of these Factories.</dd>
+
+		<dt><code>.CMYKA_Factory</code></dt>
+		<dd>Pointer to the constructor for the output <code>Object</code> holding CMYK values.&nbsp;
+		You may want to use <code>Array</code> or <code>SoftMoon.WebWare.CMYKA_Color</code>,
+		or create your own Class constructor for any of these Factories.</dd>
+
+		<dt><code>.onError()</code></dt>
+		<dd>This is the standard input value error handler filter function.&nbsp;
+			Replace it as necessary.</dd>
+
+		<dt><code>.throwErrors</code></dt>
+		<dd>Boolean flag used by the standard <code>.OnError()</code> function (above).&nbsp;
+			Change to <code>true</code> for debugging, etc…&nbsp;
+			If errors are <em>not</em> thrown, the <code>config.errorResult</code> is returned instead.</dd>
+
+		<dt><code>.logErrors</code></dt>
+		<dd>Boolean flag used by the standard <code>.OnError()</code> function (above).&nbsp;
+		Change to <code>true</code> for debugging, etc…</dd>
+
+		<dt><code>.errorResult</code></dt>
+		<dd>The value returned by the standard <code>.OnError()</code> function (above)
+		when input values are in error and <code>config.throwErrors</code> is <code>false</code>.</dd>
+
+		<dt><code>.resetConfigStackOnThrownError</code></dt>
+		<dd>If you throw errors, you may need to clean up your <code>.config</code> stack,
+			lest you create a bug or memory leak in your code’s functioning.&nbsp;
+			Set this Boolean flag to <code>true</code> to do so automatically
+			when using the standard <code>.onError()</code> function (above).&nbsp;
+			See also the notes and code example above on using <code>try {} finally {}</code>
+			code blocks instead.</dd>
+
+		<dt id='stack'><code>.stack()</code></dt>
+		<dd>Add another layer to the “top” of this <code>ConfigStack</code>’s prototype-based stack.&nbsp;
+			Pass in an optional
+			<a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties'>►<code>Object</code>
+			properties descriptor</a> to quickly set new configuration values.&nbsp;
+			Then make any temporary changes you like to the configuration values;
+			they will be valid until you <code>.cull()</code> or <code>.reset()</code> this stack (see below).</dd>
+
+		<dt><code>.cull()</code></dt>
+		<dd>Removes the “top” layer of this <code>ConfigStack</code>’s prototype-based stack.&nbsp;
+			Configuration values revert to previous settings before the last <code>.stack()</code> (see above).</dd>
+
+		<dt><code>.reset()</code></dt>
+		<dd>Removes all layers <code>.stack()</code>ed onto this <code>ConfigStack</code>’s prototype-based stack.&nbsp;
+			Configuration values revert to the “bottom” layer of settings (just above the <code>.prototype</code>).</dd>
+
+		<dt class='private'><code>.owner</code></dt>
+		<dd>Private property: do not over-write this value in the <code>ConfigStack</code> instance.&nbsp;
+			This refers back to the calculator instance or the custom Color <code>Object</code> instance
+			that this <code>ConfigStack</code> instance is “attached” to.</dd>
+
+		<dt id='stringFormat' class='stringFormat'><code>.stringFormat</code></dt>
+		<dd>For <code>RGBA_Color Objects</code>, <code>CMYK_Color Objects</code>,
+			&amp; <code>ColorWheel_Color Objects</code>
+			(<abbr>HSL</abbr>, <abbr>HSV</abbr>, <abbr>HSB</abbr>, <abbr>HCG</abbr>, and <abbr>HWB</abbr>)
+			this <code>String</code> value may define a custom output format by the default <code>.toString()</code> method.&nbsp;
+			Note you may also pass a format-string that follows these same rules directly to the <code>.toString()</code> method
+			and it will take precedence over the rules found in this default format.&nbsp;
+			It has no formatting rules other than values found in the
+			beginning of the format-string override conflicting values later in the format-string.&nbsp;
+			The format-string may contain <em>anything</em>, but the values shown below have meaning.&nbsp;
+			Note the formatting style examples are shown for the <abbr>RGB</abbr> color-space, others are similar:
+
+			<table><caption>output formatting style:</caption>
+			<tbody>
+				<tr><td>#<footmark>‡</footmark></td>  <th rowspan='2' scope='row'>#<var>rrggbbaa</var><footmark>‡</footmark></th></tr>
+				<tr><td>hex<footmark>‡</footmark></td></tr>
+				<td><abbr>css</abbr><footmark>◊</footmark></td>  <th rowspan='4' scope='row'>RGBA(<var>r</var>, <var>g</var>, <var>b</var>, <var>a</var>)<footmark>☼</footmark></th></tr>
+				<td><abbr>html</abbr><footmark>◊</footmark></td></tr>
+				<td>wrap</td></tr>
+				<td>function</td></tr>
+				<td>prefix</td>  <th scope='row'>RGBA: <var>r</var>, <var>g</var>, <var>b</var>, <var>a</var><footmark>☼</footmark></th></tr>
+				<td>commas</td>  <th rowspan='2' scope='row'><var>r</var>, <var>g</var>, <var>b</var>, <var>a</var></th></tr>
+				<td><abbr>csv</abbr></td></tr>
+				<td>plain</td>  <th scope='row'><var>r</var> <var>g</var> <var>b</var> <var>a</var></th></tr>
+				<td>tabbed</td>  <th scope='row'><var>r</var><kbd><span>Tab</span></kbd><var>g</var><kbd><span>Tab</span></kbd><var>b</var><kbd><span>Tab</span></kbd><var>a</var></th></tr>
+				<td>self</td>  <th scope='row'>RGBA_Color(<var>r</var>, <var>g</var>, <var>b</var>, <var>a</var>)</th></tr>
+			</tbody>
+			<tfoot>
+				<tr><td colspan='2'>All formats may not include the alpha value if it is undefined.</td></tr>
+				<tr><td colspan='2'>‡ hex formats are <em>only for the <abbr>RGB</abbr> color-space</em>
+					and may or may not have the <code>#</code> symbol,
+					depending on the Boolean value of <code>.config.useHexSymbol</code> and/or the
+					presence of <code>#</code> in the format string itself.</td></tr>
+				<tr><td colspan='2'>◊ <abbr>css</abbr> &amp; <abbr>html</abbr> formatting styles
+					prevent (most of) the numeric output format from being a factor (see the next table),
+					and prevent hue-angle units from being “symbols”
+					— they convert to the “textual” equivalent (see the following table)
+					except for <code>%</code> which is not a true <abbr>CSS</abbr> unit for hue-angles,
+					but word on the street is that all browsers support it.&nbsp;
+					Also, for the <abbr>HWB</abbr> color-model,
+					the output is de-standardized to suit the weird non-standard spec format,
+					and commas <code>,</code> are removed, and the alpha separator <code>/</code> is used,
+					and…(read on)…</td></tr>
+				<tr><td colspan='2'>☼ The “A” in “<abbr>RGBA</abbr>” and other color-models
+					will not be included if the alpha value is undefined.&nbsp;
+					Also for <code>HWBA_Colors</code>, the “A” will always be dropped when the output style is
+					<abbr>css</abbr> ‖ <abbr>html</abbr>.</td></tr>
+			</tfoot>
+			</table>
+
+			<table><caption>Numeric values output format:</caption>
+				<tr><td>byte</td>
+					<th scope='row'>for the <abbr>sRGB</abbr> color-space only, values are shown as integer-bytes (0–255)</th></tr>
+				<tr><td>percent</td>
+					<th scope='row'>values are shown as percents (0%–100%)</th></tr>
+				<tr><td>factor</td>
+					<th scope='row'>values are shown as factors (0.0–1.0)
+						(not for <abbr>css</abbr> ‖ <abbr>html</abbr> formatting styles, except for hue &amp; alpha values)</th></tr>
+				<tr><td>alpha</td>
+					<th scope='row'>always show an alpha value, even if one is not defined.&nbsp;
+					If it is not defined, it becomes defined in the <code>RGBA_Color</code> object
+					as the <code>.config.defaultAlpha</code> value, or <code>1</code> if the default is not defined.</th></tr>
+			</table>
+
+			<table><caption>Hue-angle-unit output format:</caption>
+				<thead><tr><td colspan='2'>Only for <code>ColorWheel_Color</code> objects
+					(<abbr>HSL</abbr>, <abbr>HSV</abbr>, <abbr>HSB</abbr>, <abbr>HCG</abbr>, and <abbr>HWB</abbr>)</td></tr></thead>
+				<tbody>
+					<tr><td>deg</td>   <th rowspan='2' scope='row'>values are shown as degrees (0°–360°)</th></tr>
+					<tr><td>°</td>     </tr>
+					<tr><td>rad</td>   <th rowspan='3' scope='row'>values are shown as radians (0ᴿ–2πᴿ≈6.2831853ᴿ)</th></tr>
+					<tr><td>ᴿ</td>     </tr>
+					<tr><td>ᶜ</td>     </tr>
+					<tr><td>grad</td>  <th rowspan='2' scope='row'>values are shown as gradians (0ᵍ–400ᵍ)</th></tr>
+					<tr><td>ᵍ</td>     </tr>
+					<tr><td>%</td>     <th scope='row'>values are shown as percent of a turn (0%–100%)</th></tr>
+					<tr><td>turn</td>  <th rowspan='3' scope='row'>values are shown as turns of a circle (0.0●–1.0●)<br>
+						“factor” is not actually a valid unit for hue-angles — it gets converted to “turn”</th></tr>
+					<tr><td>●</td>     </tr>
+					<tr><td>factor</td></tr>
+				</tbody>
+			</table>
+		</dd>
+
+		<dt class='stringFormat'><code>.useAngleUnitSymbol</code></dt>
+		<dd>Only for <code>ColorWheel_Color Objects</code>
+			(<abbr>HSL</abbr>, <abbr>HSV</abbr>, <abbr>HSB</abbr>, <abbr>HCG</abbr>, and <abbr>HWB</abbr>),
+			and <strong>not</strong> when the format output style is <abbr>css</abbr> ‖ <abbr>html</abbr>
+			(they always prevent using symbols):
+			depending on this Boolean flag (<code>true</code> / <code>false</code>),
+			the <code>.toString()</code> method may output hues with either:
+			▪ a symbol: (example: 78°);&nbsp;
+			▪ or a textual suffix: (example: 78deg) ← when applicable for the hue-angle-unit.&nbsp;
+			Typically, the hue-angle-unit used for output is defined by:
+			▪ <code>.config.hueAngleUnit</code> or
+			▪ <code>.config.formatString</code> or
+			▪ by passing a “formatString” directly to the <code>.toString()</code> method itself,
+			and may already be a symbol or not, but this flag, <strong><em>when Boolean</strong></em>, will override the final result.&nbsp;
+			This flag is <strong><em>ignored</em></strong> when
+			its value is <strong><em>not</em></strong> Boolean, such as <code>null</code> or <code>undefined</code> or <code>0</code> or <code>1</code>.</dd>
+
+	</dl>
+</div>
+<div class='help'>
+	<p>The 7 “Factory” pointers of a <code>ConfigStack</code> instance (above)
+	control the output of the functions of <code>RGB_Calc</code> and its instances.&nbsp;
+	You can set any the default configuration values for your new calculator by passing an
+	<code>Object</code> with corresponding key/value pairs to the constructor as the 1<numerance>st</numerance> parameter.&nbsp;
+	You can also set default configuration values for the custom Color <code>Objects</code>
+	(<code>RGBA_Color</code>, etc.) by passing to their constructors the configuration options object
+	as the final (5<numerance>th</numerance> or 6<numerance>th</numerance>) value.&nbsp;
+	Note that <strong>unlike</strong> the <code>.config.stack()</code> method,
+	this configuration <code>Object</code> is <strong>not</strong> a JavaScript<mark class='macronym'>™</mark> “properties descriptor.”</p>
+
+	<code class='block'>/*
+ * this example provides a calculator that returns
+ * RGB output as a simple array of values,
+ * instead of the default RGBA_Color object instance:
+ */
+myCalc=new SoftMoon.WebWare.RGB_Calc({RGBA_Factory:Array});
+
+/*
+ * this example provides a calculator that returns
+ * an RGBA_Color object instance that outputs
+ * hex using the # symbol, regardless of the universal default:
+ */
+myCalc=new SoftMoon.WebWare.RGB_Calc;
+myCalc.config.RGBA_Factory=function(r,g,b,a)  {
+	return new SoftMoon.WebWare.RGBA_Color(r,g,b,a,{useHexSymbol:true});
+	};</code>
+
+	<h4 id='quick-audit-mini'><strong>“audit”</strong>, <strong>“quick”</strong>, &amp; “mini” calculators</h4>
+	<p>When you create your own new calculator, it can be either an “audit” or “quick” type.&nbsp;
+	This is controlled by passing <code>true</code> for a “quick” calculator,
+	or <code>false</code> (the default) for an “auditing” calculator, as the 2<numerance>nd</numerance> parameter to the constructor.&nbsp;
+	You can even make your own custom “mini” calculators that only have the conversion function(s) you specifically need.&nbsp;
+	The “mini” calculator descriptor <code>Object</code> (passed into the constructor as the 3<numerance>rd</numerance> parameter)
+	can have “to” and/or “from” options (property keys), and their values should be an <code>Array</code>
+	listing the conversion functions as individual <code>String</code> values.&nbsp;
+	You can have any combination of these options, such as a “quick-mini” calculator that returns native <code>Array</code>s.</p>
+
+	<code class='block'>// This is the calculator that the “Rigden-colorblind_websafe-table_interpolator”
+// plug-in for this <code>RGB_Calc</code> class uses in its own internal workings.
+// It is a “quick” calculator that only has RGB to HCG functionality, and it returns an Array.
+const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
+	{HCGA_Factory: Array, defaultAlpha: undefined},
+	true,
+	{to:['hcg']}
+	);</code>
+
+
+	<h4 id='palettes'>using the named-color palettes</h4>
+
+	<p>The <code>RGB_Calc</code> Class can interpret named colors, as well as color-models,
+	when using an “auditing” calculator.&nbsp;
+	It comes packaged with nine named-color database files included:
+	<abbr>ANSI</abbr>, Brewer, common, Crayola, <abbr>CSS</abbr>, Material Design, OpenOffice, universal, &amp; X11.&nbsp;
+	The palette file format can come in two formatting flavors: JavaScript<mark class='macronym'>™</mark> &amp; <abbr>JSON</abbr>.
+	The JavaScript<mark class='macronym'>™</mark>-formatted palette-files can be hard-loaded using an <abbr>HTML</abbr> &lt;script&gt; tag in
+	your web-page; while the <abbr>JSON</abbr>-formatted palette-files can be loaded from a server
+	using <abbr>HTTP</abbr>.&nbsp;
+	The <code>RGB_Calc</code> package comes with a basic JavaScript<mark class='macronym'>™</mark> function
+	(<code>SoftMoon.WebWare.loadPalettes()</code>)
+	to load <abbr>JSON</abbr> palettes from a server
+	as well as a basic <abbr>PHP</abbr> file for the server’s <code>color_palettes/</code> folder “index”
+	that are designed to work together.&nbsp;
+	(Note that the name of this folder can be changed but it must end with a folder-separator <code>/</code>
+	— see: <code>SoftMoon.colorPalettes_defaultPath</code>)&nbsp;
+	(Note also that the <abbr>PHP</abbr> “index” file may be replaced with one in any programming language, or even a static text file!)
+	You can simply add/remove palette files (they must have the extension: <kbd>.palette.json</kbd>)
+	from the server’s <code>color_palettes/</code> folder
+	without having to modify any <abbr>HTML</abbr>, JavaScript<mark class='macronym'>™</mark>, or <abbr>PHP</abbr> code
+	(if you use a static text file for the “index”, you will have to keep it manually updated);
+	the “qualifying” palette files in the folder will be loaded.&nbsp;
+	Without a server, the palette files must be loaded via
+	<abbr>HTML</abbr> &lt;script&gt; tags in the JavaScript<mark class='macronym'>™</mark> flavor.</p>
+
+	<p>You can also create your own named-color palettes,
+	and an instructional file to do so is included in the <code>color_palettes/</code> folder.&nbsp;
+	As a special note, your palettes can have their own <code>.config</code> values for the calculator that interprets them,
+	and this should be a simple object containing the properties and their settings you desire,
+	the same as you pass into the calculator or custom-color-objects constructors
+	(<strong>not</strong> an object-properties-descriptor formatted for <a href='#stack'>▲ <code>.config.stack()</code></a>).&nbsp;
+	You may want to pay attention to them if you use a “non-standard” configuration.&nbsp;
+	All palettes use <code>inputAsFactor=false</code> and <code>hueAngleUnit='deg'</code> by default,
+	regardless of whatever the current calculator’s <code>.config</code> values are.&nbsp;
+	Remember, simply using unit-qualifiers in your palette’s color specs may alleviate the need for any <code>.config</code> values.&nbsp;
+	In particular, your individual palettes may want to control the default Hue-angle-unit,
+	input-as-factors, input-as-short-hex, default Alpha values, or whether to allow add-on Alpha values.&nbsp;
+	Configuration values for palettes are by default limited to the above list of properties,
+	since normally the other calculator configuration settings are not Palette-specific,
+	but your implementation may add (or remove) properties from this list.&nbsp;
+	There is no reason you couldn’t, for example, create a system that uses your own
+	custom Color-objects as return-data from the calculator,
+	and your individual Palettes may want to specify which “Factory” to choose.&nbsp;
+	You can control which <code>.config</code> properties are allowed in a Palette
+	through the array at <code>SoftMoon.WebWare.Palette.configProps</code>
+	by adding/removing string-names of the specific properties.</p>
+
+	<p>Palette files may have extraneous meta-data in them.&nbsp;
+	The supplied files come with meta-data that the
+	<a href='https://softmoon-webware.com/MasterColorPicker_instructions.php' target='SoftMoon'>►MasterColorPicker</a>
+	project uses.&nbsp;
+	You may also put any meta-data in the palettes you create, but when they are loaded
+	and processed, the final <code>SoftMoon.WebWare.Palette</code> object
+	that gets saved in <code>SoftMoon.palettes</code> will not, by default, include said meta-data.&nbsp;
+	If you want your meta-data included in the processed palette, you need to tell the
+	<code>SoftMoon.WebWare.Palette</code> constructor to include it.&nbsp;
+	To do so, add string values for the meta-data property names
+	to the <code>SoftMoon.WebWare.Palette.properties</code> array.&nbsp;
+	If your custom palette uses the meta-data property “foobar,”
+	then use the code: <code>SoftMoon.WebWare.Palette.properties.push('foobar');</code></p>
+
+	<p>Palette files are supplied in the JavaScript<mark class='macronym'>™</mark> flavor.&nbsp;
+	To use them with a server requires that they are converted to <abbr>JSON</abbr>.&nbsp;
+	This is simple and easy; there is an instructional file to do so manually,
+	as well as a <abbr>PHP</abbr> file to do so automatically.&nbsp;
+	Find both in the <kbd>color_palettes/</kbd> folder.</p>
+
+	<p>To use a JavaScript<mark class='macronym'>™</mark> flavored palette,
+	you must first create a property of the <code>SoftMoon</code> namespace:
+	<code>SoftMoon.loaded_palettes=new Array;</code>
+	then load the file using a &lt;script&gt; tag.&nbsp;
+	The palette will place itself in the <code>SoftMoon.loaded_palettes</code> array.&nbsp;
+	You must then use a JavaScript<mark class='macronym'>™</mark> Event-handler to add the palette to the “processed”
+	palettes (found in <code>SoftMoon.palettes</code>).&nbsp;
+	You use the function <code>SoftMoon.WebWare.addPalette()</code> to process the palette.&nbsp;
+	You can use an “onload” property of the &lt;script&gt; tag as shown in the example at the top of this page,
+	or wait until all palettes are loaded and use an “onload” event on the window
+	and then add all palettes found in the <code>SoftMoon.loaded_palettes</code> array.</p>
+
+	<p>To use a <abbr>JSON</abbr> flavored palette,
+	the <code>SoftMoon.WebWare.loadPalettes()</code> function contacts the server,
+	requesting the index for the palette files.&nbsp;
+	The index returned contains the names of all palette files
+	in the <code>color_palettes/</code> folder &amp; its sub-folders.&nbsp;
+	Once the <code>loadPalettes()</code> function gets the index, it “qualifies” each file for loading.&nbsp;
+	Any file in a “trash” folder or its sub-folders is ignored.&nbsp;
+	Any file in a “users” folder or its sub-folders is ignored,
+	<strong>unless</strong> it is in an “autoload” folder or its sub-folders.&nbsp;
+	The names of these folders (“trash”, “users”, “autoload”)
+	can be modified, but it is a bit trickier
+	and requires knowing how to use JavaScript<mark class='macronym'>™</mark> Regular Expressions;
+	see the <code>loadPalettes()</code> function code in the <kbd>RGB_Calc.js</kbd> file for more details.&nbsp;
+	Once a palette file is deemed “qualified” for loading, it is loaded, processed,
+	and added to <code>SoftMoon.palettes</code></p>
+
+	<p>The <code>SoftMoon.WebWare.loadPalettes()</code> function requires no parameters to work,
+	but it can take many, to customize the palette loading process.&nbsp;
+	These are no light-duty customizations.&nbsp;
+	The details of these customizing options are beyond this text,
+	require that you fully understand JavaScript<mark class='macronym'>™</mark>
+	and asynchronous communications,
+	and are fairly self-explanatory if you read the
+	<code>loadPalettes()</code> function code in the <kbd>RGB_Calc.js</kbd> file.&nbsp;
+	The <code>loadPalettes()</code> function relies on the external file <kbd>HTTP.js</kbd>
+	to handle communications, and some of the parameters you pass are for
+	customizing that Class’ functionality so see its file also.</p>
+
+	<p>Palettes may also be loaded from a browser’s internal database.&nbsp;
+	The <code>SoftMoon.WebWare.loadDBPalettes()</code> function handles this.&nbsp;
+	However, no functionality is supplied to store a palette in the database; this may change in the future.&nbsp;
+	(The <a href='https://softmoon-webware.com/MasterColorPicker_instructions.php' target='SoftMoon'>►MasterColorPicker</a>
+	project can create them, if you are interested; but remember:
+	browser databases <strong>only</strong> work with the website domain (when using a server)
+	or the individual <abbr>HTML</abbr> file (when working from your home filesystem) that created the database.)
+	Palettes in the database should be <abbr>JSON</abbr> formatted.&nbsp;
+	You can also customize the functionality of the loading process as you can when loading from a server — see the code.</p>
+
+
+	<h4><code>RGB_Calc</code>’s custom color <code>Object</code>s</h4>
+
+	<p>The <code>RGB_Calc</code> package comes with constructors for custom color <code>Object</code>s
+	and these are used as the default output from conversion functions.&nbsp;
+	They are meant to be relatively “universal” in usage with other software packages.&nbsp;
+	They are designed internally so if you change one value in the color-object,
+	it reflects throughout the entire object.&nbsp;
+	For example, in an <code>RGBA_Color</code> object, if you change the property of
+	<code>.red</code>, the other properties <code>.r</code> <code>.rgb[0]</code> <code>.rgba[0]</code> &amp; <code>.hex</code>
+	all change in accordance.&nbsp;
+	The <code>RGBA_Color</code> objects also have within themselves conversion properties
+	to other color-models, as well as properties that provide “contrast” and “shade.”&nbsp;
+	These other custom objects have within them a conversion property to <abbr>RGB</abbr>,
+	and <code>HSBA_Color</code> &amp; <code>HSVA_Color</code> objects also provide
+	a conversion property to <abbr>CMYK</abbr>, since this is a near-parallel mapping.&nbsp;
+	You can find this latter conversion service as a static <code>function</code> at:
+	<code>SoftMoon.WebWare.HSVA_Color.to_CMYK()</code></p>
+
+	<code class='block'>const myRGB=new SoftMoon.WebWare.RGBA_Color(245, 191, 46);
+console.log(myRGB.to.hcg);  //this is a property, not a method.
+console.log(myRGB.to.cmyk);  //this is a property, not a method.
+console.log(myRGB.contrast);  //this is a property, not a method.
+const myHSV=new SoftMoon.WebWare.HSVA_Color(0.4, 0.9, 0.67);
+console.log(myHSV.to.rgb);  //this is a property, not a method.
+console.log(myHSV.to.cmyk);  //this is a property, not a method.
+const myHSV_array=[0.4, 0.9, 0.67];
+console.log(SoftMoon.WebWare.HSVA_Color.to_CMYK(myHSV_array));  // this is a simple function, not a method.</code>
+
+	<p>These custom color <code>Object</code>s also provide <code>.toString()</code> methods
+	that provide user-friendly reading.&nbsp;
+	These methods are highly customizable with ease, on-the-fly as necessary.&nbsp;
+	To control their output, you use the <code>ConfigStack</code> configuration object
+	of the custom color <code>Object</code> (e.g. <code>myColor.config.stringFormat</code>)
+	or pass in the formatting info directly to the <code>.toString()</code> method.&nbsp;
+	For <code>ColorWheel_Color</code>s, the <code>.config.useAngleUnitSymbol</code> option is valid also.&nbsp;
+	See the <a href='#stringFormat'>▲details in the section on <code>ConfigStack</code>s above</a>.</p>
+
+	<p>You should note that the <abbr>HSB</abbr> and <abbr>HSV</abbr> color-models are actually one-in-the-same.&nbsp;
+	<code>RGB_Calc</code>’s custom underlying Color-<code>Object</code> is therefore the same.&nbsp;
+	You can access “<code>.brightness</code>” from an <code>HSVA_Color</code> instance,
+	and “<code>.value</code>” from an <code>HSBA_Color</code> instance.&nbsp;
+	The only difference is in the <code>constructor</code> and <code>name</code> values:</p>
+	<code class=block>const hsv=new SoftMoon.WebWare.HSVA_Color(0.3, 0.5, 0.7);
+const hsb=new SoftMoon.WebWare.HSBA_Color(0.3, 0.5, 0.7);
+console.log(hsv instanceof HSBA_Color);  //false
+console.log(hsb instanceof HSVA_Color);  //false
+console.log(hsv instanceof ColorWheel_Color);  //true
+console.log(hsb instanceof ColorWheel_Color);  //true
+console.log(hsv.name)  //HSVA_Color
+console.log(hsb.name)  //HSBA_Color
+console.log(hsv.brightness)  //0.7
+console.log(hsb.value)  //0.7</code>
+
+</div>
+
+</main>
+
+<footer>
+<p>SoftMoon-WebWare and its websites do not use or store “cookies” or other data on your computer/device
+(except for application demos that require your intent to do so, to store “settings” and the data you generate and desire to save).&nbsp;
+No personal data is transferred to any other entity
+(except with your intent as previously stated while using “demos”,
+and said data is only transferred to SoftMoon-WebWare.com and is <em>not</em> saved).&nbsp;
+You are not being tracked, quantified, or mined for data when visiting our sites.&nbsp;
+We hope you enjoy the advertisement-free experience that shuns the growing worldwide corporate-fascism movement.</p>
+<p>All content found on this page &amp; site Copyright © 2013, 2023  by SoftMoon-WebWare and its owner,
+all rights reserved, unless otherwise specifically noted.&nbsp;
+Trademarks and Service-Marks are property of SoftMoon-WebWare and its owner,
+all rights reserved, unless otherwise specifically noted.</p>
+<p>
+<note>“JavaScript” is a trademark of Oracle Corporation.</note>
+</p>
+</footer>
+</body>
+</html>
