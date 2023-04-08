@@ -1,6 +1,6 @@
 // charset=UTF-8
 //  +++Math.js
-//	January 10, 2022
+//	April 3, 2023
 
 //  JavaScript needs true full UTF-8 support for variable & constant names…
 
@@ -43,7 +43,7 @@ delete Math['+++angleDefiners'];
 
 //rounds  x  to  dp  decimal places.
 if (typeof Math.roundTo !== 'function')
-	Math.roundTo=function(x, dp)  {return Math.round(x*Math.pow(10,dp))/Math.pow(10,dp);}
+	Math.roundTo=function(dp, x)  {return Math.round(x*Math.pow(10,dp))/Math.pow(10,dp);}
 else console.log('Math.roundTo already exists');
 
 
@@ -83,6 +83,10 @@ else console.log('Math.deg already exists');
 
 if (typeof Math.rad !== 'function')  Math.rad=Math.sawtooth.bind(Math, _2PI);
 else console.log('Math.rad already exists');
+
+if (typeof Math.turn !== 'function')  Math.turn=Math.sawtooth.bind(Math, 1);
+else console.log('Math.turn already exists');
+
 /*
 
 if (typeof Math.sawtoothAt !== 'function')  Math.sawtoothAt=function(s,e,x) {return Math.sawtooth(e-s, x-s)+s};
