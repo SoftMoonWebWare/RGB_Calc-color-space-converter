@@ -1,6 +1,6 @@
 //  character encoding: UTF-8 UNIX   tab-spacing: 2   word-wrap: no   standard-line-length: 160
 
-// RGB_Calc.js  release 1.6  February 27, 2023  by SoftMoon WebWare.
+// RGB_Calc.js  release 1.8  November 25, 2023  by SoftMoon WebWare.
 // based on  rgb.js  Beta-1.0 release 1.0.3  August 1, 2015  by SoftMoon WebWare.
 /*   written by and Copyright © 2011, 2012, 2013, 2016, 2018, 2020, 2022, 2023 Joe Golembieski, SoftMoon WebWare
 
@@ -24,9 +24,8 @@
 
 'use strict';
 
-/*   The SoftMoon property is usually a constant defined in a “pinnicle” file somewhere else
-if (typeof SoftMoon !== 'object')  SoftMoon=new Object;
-if (typeof SoftMoon.WebWare !== 'object')   SoftMoon.WebWare=new Object;
+/*   The SoftMoon namespace Object is usually a constant defined in a “pinnicle” file somewhere else
+const SoftMoon=Object.defineProperty({}, 'WebWare', {value:{}, enumerable:true});
 */
 
 // this is the palette that is checked first, without needing a palette identifier.
@@ -42,6 +41,7 @@ if (typeof SoftMoon.palettes !== 'object')  SoftMoon.palettes=new Object;
  *  and MUST end with a  /
  */
 if (!SoftMoon.colorPalettes_defaultPath)  SoftMoon.colorPalettes_defaultPath='color_palettes/';
+
 
 
 
@@ -281,7 +281,8 @@ RegExp.fourFactors_A=new window.RegExp( '^' +f +sep+ f +sep+ f +sep+ f+ '(?:' +a
 const byteVal='1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]',
 			_byte_= '(' + byteVal + ')',
 			_percent_= '((?:' + pVal + ')%)',
-			rgb='\\s*0*((?:' + byteVal + ')|(?:(?:' + pVal + ')%))\\s*?';
+			rgb='\\s*0*((?:' + byteVal + ')|(?:(?:' + pVal + ')%))\\s*?',
+			_r_g_b_='\\s*0*((?:' + byteVal + ')|(?:(?:' + pVal + ')%)|[ _Ø∅*◊])\\s*?';
 
 							//   "v¹, v², v³"  where:  (0 <= (int)vⁿ <= 255)
 RegExp.threeBytes=new window.RegExp( '^' +_byte_ +sep+ _byte_ +sep+ _byte_+ '$' );
@@ -298,6 +299,11 @@ RegExp.threePercents_A=new window.RegExp( '^' +_percent_ +sep+ _percent_ +sep+ _
 RegExp.rgb=new window.RegExp( '^' +rgb+ sep +rgb+ sep +rgb+ '$' );
 RegExp.rgba=new window.RegExp( '^' +rgb+ sep +rgb+ sep +rgb+ aSep + f + '$' );
 RegExp.rgb_a=new window.RegExp( '^' +rgb+ sep +rgb+ sep +rgb+ '(?:' +aSep + f + ')?$' );
+// this non-standard format allows "blank" or "undefined" channels of three types: a blank “space” or “_”; a nullset “Ø” or “∅”; a lozenge “◊”
+// the blank and nullset are meant to mean no mods to that channel;
+// the lozenge in meant to mean a placeholder that will be filled in - specifically when used with gradients.
+// see also .config.allowUndefinedRGBChannels
+RegExp._r_g_b_a_=new window.RegExp('^' +_r_g_b_+ "," +_r_g_b_+ "," +_r_g_b_+ '(?:' +"," + f + ')?$', "u");
 
 //var p='\\s*0*((?:100|[0-9]{1,2}(?:\\.[0-9]*)?|\\.[0-9]+)%?)\\s*';   //no leading zeros in factors <1  (extras truncated)
 const p='\\s*0*?((?:' + pVal + ')%?)\\s*';  //one leading zero allowed in factors <1  (extras truncated)
@@ -315,26 +321,32 @@ RegExp.cmyk_a= new window.RegExp( '^' +p+ sep +p+ sep +p+ sep +p+ '(?:' +aSep + 
 
 const h_=  '\\s*(-?[0-9]+(?:\\.[0-9]*)?|-?0?\\.[0-9]+)(deg|°|g?rad|ᴿ|ᶜ|ᵍ|%|turn|●)?\\s*',    //captures the postfix text (i.e. the “unit”) separately  →  m[1]='123' , m[2]='deg'
 			h='\\s*((?:-?[0-9]+(?:\\.[0-9]*)?|-?0?\\.[0-9]+)(?:deg|°|g?rad|ᴿ|ᶜ|ᵍ|%|turn|●)?)\\s*';  //does not capture postfix text separately: it is included with the numerical data  →  m[1]='123deg'
-							//hsl,hsv,hsb,hcg:   "v¹, v², v³"  where
+							//hsl,hsv,hsb,hcg,hwb:   "v¹, v², v³"  where
 							// v¹=(±float)(unit),   and  ( 0 <= (float)(v²,v³) <= 100 )
 							// →→→ v¹ may or may not have (unit);  v²,v³ may or may not end with a percent sign %
 RegExp.hsl=
 RegExp.hsv=
 RegExp.hsb=
 RegExp.hcg=
-RegExp.ColorWheelColor=new window.RegExp( '^' +h+ sep +p+ sep +p+ '$' );
+RegExp.hwb=
+RegExp.ColorWheelColor=new window.RegExp( '^' +h+ sep +p+ sep +p+ '$', "u" );
 RegExp.hsla=
 RegExp.hsva=
 RegExp.hsba=
 RegExp.hcga=
-RegExp.ColorWheelColorA=new window.RegExp( '^' +h+ sep +p+ sep +p+ aSep +f+ '$' );
+RegExp.hwba=
+RegExp.ColorWheelColorA=new window.RegExp( '^' +h+ sep +p+ sep +p+ aSep +f+ '$', "u" );
 RegExp.hsl_a=
 RegExp.hsv_a=
 RegExp.hsb_a=
 RegExp.hcg_a=
-RegExp.ColorWheelColor_A=new window.RegExp( '^' +h+ sep +p+ sep +p+ '(?:' +aSep +f+ ')?$' );
+RegExp.hwb_a=
+RegExp.ColorWheelColor_A=new window.RegExp( '^' +h+ sep +p+ sep +p+ '(?:' +aSep +f+ ')?$', "u" );
+RegExp.HWB=new window.RegExp( '^' +h+ " +" +p+ " +" +p+ '$', "u");
+RegExp.HWBA=new window.RegExp( '^' +h+ " +" +p+ " +" +p+ ' +/ +' +f+ '$', "u");
+RegExp.HWB_A=new window.RegExp( '^' +h+ " +" +p+ " +" +p+ '(?: +/ +' +f+ ')?$', "u");
 RegExp.Hue=
-RegExp.angle= new window.RegExp( '^' +h_+ '$' );
+RegExp.angle= new window.RegExp( '^' +h_+ '$', "u" );
 
 
 
@@ -351,6 +363,9 @@ RegExp.angle= new window.RegExp( '^' +h_+ '$' );
 function getByteValue(v)  {
 	var isNotPercent=true;  // or a factor…
 	if (typeof v === 'string')  {
+		if (this.config.allowUndefinedRGBChannels)  {
+			if (v==='*'  ||  v==='◊')  return v;
+			if (v===' '  ||  v==='_'  ||  v==='Ø'  ||  v==='∅')  return undefined;  }
 		if (v.substr(-1)==='%')  {v=parseFloat(v)*2.55;  isNotPercent=false;}
 		else  v=parseFloat(v);  }
 	else if (v instanceof Number)  switch (v.unit)  {// this experimental property name is subject to change
@@ -385,6 +400,7 @@ function getFactorValue(v)  {
 	return (v<0 || v>1) ? false : v;  }
 
 function getAlphaFactor(v)  {
+	if (v===""  ||  v===undefined  ||  v===null)  return undefined;
 	v= ((typeof v !== 'string'  ||  !v.endsWith("%"))
 		&&  (!(v instanceof Number)  ||  v.unit!=='%'))  ?  // this experimental property name is subject to change
 		parseFloat(v)  :  (parseFloat(v)/100);
@@ -470,7 +486,7 @@ function RGB_Calc($config, $quickCalc, $mini)  {
 						calc.config.stack(SoftMoon.palettes[SoftMoon.defaultPalette].config);
 						try {
 							if (pClr[2]  &&  calc.config.forbidAddOnAlpha)
-								return calc.config.onError($string, undefined, MSG_noAddOnAlpha)
+								return calc.config.onError($string, undefined, MSG_noAddOnAlpha);
 							matches=calc(matches);  }
 						finally {calc.config.cull();}
 						if (matches)  {
@@ -480,8 +496,8 @@ function RGB_Calc($config, $quickCalc, $mini)  {
 						return matches;  }
 					if (matches=($string.match(RegExp.stdWrappedColor)  ||  $string.match(RegExp.stdPrefixedColor)))  {
 						matches[1]=matches[1].trim().toLowerCase();
-						if (typeof calc.from[matches[1]] === 'function')  {
-							return calc.from[matches[1]](matches[2]);       }
+						if (typeof calc.from[matches[1]] === 'function')  
+							return calc.from[matches[1]](matches[2]);  
 						for (const p in SoftMoon.palettes)  {
 							if (p.toLowerCase()===matches[1]  &&  (SoftMoon.palettes[p] instanceof SoftMoon.WebWare.Palette))  {
 								matches=matches[2].match(RegExp.addOnAlpha);
@@ -489,7 +505,7 @@ function RGB_Calc($config, $quickCalc, $mini)  {
 								calc.config.stack(SoftMoon.palettes[p].config);
 								try {
 									if (a  &&  calc.config.forbidAddOnAlpha)
-										return calc.config.onError($string, undefined, MSG_noAddOnAlpha)
+										return calc.config.onError($string, undefined, MSG_noAddOnAlpha);
 									matches=calc(SoftMoon.palettes[p].getColor(name));  }
 								finally {calc.config.cull();}
 								if (matches)  {
@@ -503,10 +519,26 @@ function RGB_Calc($config, $quickCalc, $mini)  {
 
 	if (!$quickCalc)  {
 		const props=Object.getOwnPropertyNames(RGB_Calc.prototype);
-		for (const p of props)  {Object.defineProperty(calc, p, Object.getOwnPropertyDescriptor(RGB_Calc.prototype, p));}
+		for (const p of props)  { switch (p)  {
+			case 'luminance':  
+				Object.defineProperty(calc, p, {value:function(color)  {
+						this.config.stack({RGBA_Factory: {value:Array}});
+						try {return luminance(this.$(color));}
+						finally {this.config.cull();}  },
+					enumerable: true});
+			break;
+			case 'contrastRatio':
+				Object.defineProperty(calc, p, {value:function(fore, back)  {
+						this.config.stack({RGBA_Factory: {value:Array}});
+						try {return contrastRatio(this.$(fore), this.$(back));}
+						finally {this.config.cull();}  },
+					enumerable: true});
+			break;
+			default:
+				Object.defineProperty(calc, p, Object.getOwnPropertyDescriptor(RGB_Calc.prototype, p));  }  }
 		Object.defineProperties(calc,  {
 			convertColor: {value: convertColor},  //this is for plug-ins
-			$: {value: calc}  });   } //this is used internally by convertColor
+			$: {value: calc}  });   } //this is also used internally by convertColor
 
 	Object.defineProperties(calc, {
 		config: {enumerable: true,  writable: true,   value: new RGB_Calc.ConfigStack(calc, $config)},
@@ -562,6 +594,14 @@ RGB_Calc.ConfigStack.prototype={
  *    0 <= factor <=1     0 <= percent <= 100     0 <= byte <= 255
  */
 	inputAsFactor: false,
+
+/* this controls whether you can pass undefined channels to the RGB color space.
+ * this non-standard format allows "blank" or "undefined" channels of three types: a blank “ ” (space) or “_”; a nullset “Ø” or “∅”; a lozenge “◊”
+ * the blank and nullset are meant to mean no mods to that channel;
+ * the lozenge in meant to mean a placeholder that will be filled in - specifically when used with gradients.
+ * This flag has no effect when .config.inputAsFactor=true
+ */
+	allowUndefinedRGBChannels: false,
 
 /* When you pass an Array into an “audit” calculator,
  * it will interpret the values and may convert them into factors from 0–1
@@ -678,6 +718,8 @@ Object.defineProperties(RGB_Calc.prototype, defem);
 
 const hueAngleUnitFactors=
 RGB_Calc.hueAngleUnitFactors=  //you may add to these …but replacing them altogether does nothing…
+		Math.Trig.angleUnitFactors
+/*
 	Object.defineProperties(new Object, {
 		'deg':  {value: 360,       enumerable: true},
 		"°":    {value: 360,       enumerable: true},
@@ -689,7 +731,7 @@ RGB_Calc.hueAngleUnitFactors=  //you may add to these …but replacing them alto
 		"%":    {value: 100,       enumerable: true},
 		'turn': {value: 1,         enumerable: true},
 		"●":    {value: 1,         enumerable: true}  });
-
+ */
 
 RGB_Calc.outputRGB=
 RGB_Calc.prototype.outputRGB= outputRGB;
@@ -732,6 +774,30 @@ RGB_Calc.prototype.install= function(cSpace, provider)  {
 
 
 
+RGB_Calc.luminance=
+RGB_Calc.prototype.luminance=luminance;
+//  https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
+function luminance(rgba)  {  // rgb from 0-255, a (alpha-opacity) from 0.0-1.0
+	const
+		A= (rgba[3]===undefined) ? 1 : rgba[3],
+		R=(rgba[0]/255)*A,
+		G=(rgba[1]/255)*A,
+		B=(rgba[2]/255)*A;
+	return ( 0.2126 * (R<0.04045 ? (R/12.92) : (((R+0.055)/1.055) ** 2.4))
+				 + 0.7152 * (G<0.04045 ? (G/12.92) : (((G+0.055)/1.055) ** 2.4))
+				 + 0.0722 * (B<0.04045 ? (B/12.92) : (((B+0.055)/1.055) ** 2.4)) );  }
+
+RGB_Calc.contrastRatio=
+RGB_Calc.prototype.conrastRatio=contrastRatio;
+//  https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
+function contrastRatio(fore, back)  {
+	const
+		L2=luminance(back),
+		T= (fore[3]===undefined) ? 0 : (1-fore[3]),
+		L1=luminance(fore)+T*L2;
+	return (L1>L2) ? ((L1+0.05)/(L2+0.05)) : ((L2+0.05)/(L1+0.05));  }
+
+	
 
 // This object’s properties are conversion functions.
 // You may add to them………for your convenience
@@ -751,7 +817,8 @@ RGB_Calc.to.contrast=contrastRGB;
 RGB_Calc.to.definer.quick.contrast={value:contrastRGB};
 RGB_Calc.to.definer.audit.contrast={value: function() {return convertColor.call(this, arguments, contrastRGB, 'contrast');}};
 function contrastRGB(rgb)  {
-	return  (this.config.useHexSymbol ? '#' : "") + ((((Number(rgb[0])+Number(rgb[1])+Number(rgb[2]))/3) < 128)  ?  'FFFFFF' : '000000');  }
+	return  (this.config.useHexSymbol ? '#' : "") + (luminance(rgb)<0.2159  ?  'FFFFFF' : '000000');  }  //  RGB(128, 128, 128) has luminance of 21.59%
+//	return  (this.config.useHexSymbol ? '#' : "") + ((((Number(rgb[0])+Number(rgb[1])+Number(rgb[2]))/3) < 128)  ?  'FFFFFF' : '000000');  }
 
 RGB_Calc.to.shade=shadeRGB;
 RGB_Calc.to.definer.quick.shade={value:shadeRGB};
@@ -1002,7 +1069,7 @@ function fromRGBA(r, g, b, a)  {  // alternate arguments format shown below
 	var matches;
 	if (arguments.length===1)  {
 		if (typeof arguments[0] === 'string'
-		&&  (matches=arguments[0].match(this.config.inputAsFactor ? RegExp.threeFactors_A : RegExp.rgb_a)))  {
+		&&  (matches=arguments[0].match(this.config.inputAsFactor ? RegExp.threeFactors_A : (this.config.allowUndefinedRGBChannels ? RegExp._r_g_b_a_ : RegExp.rgb_a))))  {
 //		&&  ((matches=arguments[0].match(this.config.inputAsFactor ? RegExp.threeFactors : RegExp.rgb))
 //			|| (matches=arguments[0].match(this.config.inputAsFactor ? RegExp.fourFactors : RegExp.rgba))))  {
 			matches.shift();
@@ -1299,6 +1366,7 @@ function RGBA_Color($r, $g, $b, $a, $config)  {
 							$r=parseInt($h[3], 16);  $g=parseInt($h[4], 16);  $b=parseInt($h[5], 16);
 							if ($h[6])  $a=parseInt($h[6], 16)/255;  }  },
 					enumerable: true},
+		luminance: {get: luminance.bind(ThisColorObject, rgba), enumerable: true},
 		contrast: {get: contrastRGB.bind(ThisColorObject, rgba),  enumerable: true},
 		shade: {get: shadeRGB.bind(ThisColorObject, rgba),  enumerable: true},
 		to: {enumerable: true,  value: Object.defineProperties(new Object, {
