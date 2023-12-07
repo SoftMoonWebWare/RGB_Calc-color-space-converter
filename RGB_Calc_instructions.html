@@ -5,6 +5,7 @@
 <meta name='description' content='utility for color-space conversions'>
 <meta name='author' content='Joe Golembieski, SoftMoon-WebWare'>
 <meta name='copyright' content='Copyright © 2013, 2022, 2023 Joe Golembieski, SoftMoon-WebWare'>
+<meta name='page_last-udate' content='December 6, 2023'>
 <title>RGB_Calc instructions from SoftMoon-WebWare</title>
 <link rel="icon" type="image/x-icon" href="images/SoftMoonWebWare.gif">
 <style type="text/css">
@@ -203,18 +204,10 @@ footer note {
 footer note:last-child {
 	margin-right: 0; }
 
-.macronym {
-	display: inline;
+abbr[tm] {
 	font-size: .763924em;
 	vertical-align: .236076em;
 	line-height: 100%; }
-acronym.macronym {
-	font-size: .382em;
-	vertical-align: 1.1618em;
-	border-bottom: none; }
-mark {
-	color: inherit;
-	background-color: inherit; }
 </style>
 </head>
 <body>
@@ -222,7 +215,7 @@ mark {
 <h1>Custom Web Software Development</h1>
 <figure>
 <img id='logo' src="images/SoftMoon-WebWare.gif" alt="SoftMoon-WebWare">
-<figcaption>JavaScript<mark class='macronym'>™</mark>, <abbr>HTML 5</abbr>, <abbr>CSS 4</abbr>, &amp; <abbr>PHP 8</abbr>:
+<figcaption>JavaScript<abbr tm>™</abbr>, <abbr>HTML 5</abbr>, <abbr>CSS 4</abbr>, &amp; <abbr>PHP 8</abbr>:
 <span>Innovative Enterprise level Scripting for interactive sites, <acronym title='software as a service'>SaaS</acronym>, &amp; cross-platform desktop apps</span></figcaption>
 </figure>
 <h1><code>RGB_Calc</code> color-space conversion calculator</h1>
@@ -250,6 +243,8 @@ or Git it on GitHub:
 	<p>The <code>RGB_Calc</code> Class focuses on converting the
 		<abbr>sRGB</abbr> (standard Red-Green-Blue) color-<em>space</em>
 		to &amp; from various other color-<em>models</em>.&nbsp;
+		It also has utility functions for calculationg
+		<a href='https://developer.mozilla.org/en-US/docs/Web/Accessibility/Understanding_Colors_and_Luminance' target="Mozilla">Luminance and Color-Contrast</a>.&nbsp;
 		Note a color-<em>space</em> has defined limits to values — the sRGB color space limits each value to integers ranging from <kbd>0—255</kbd>.&nbsp;
 		In reality, colors could be more intense (have more Chroma), or more densely packed throughout the range of intensity,
 		but <kbd>255</kbd> is the limit that computers use.&nbsp;
@@ -270,7 +265,7 @@ or Git it on GitHub:
 		and that is where this discussion leads…but not here.<p>
 
 	<p>To use the package, you must first create a couple of namespaces for it.&nbsp;
-		Typically, these namespaces are JavaScript<mark class='macronym'>™</mark> constants,
+		Typically, these namespaces are JavaScript<abbr tm>™</abbr> constants,
 		and are used by many of SoftMoon-WebWare’s various different library packages,
 		so they can’t all create the constant.&nbsp;
 		The <code>SoftMoon</code> namespace is our root, and it holds simple “universal” data
@@ -304,7 +299,9 @@ Object.defineProperties(SoftMoon, {
 	defer onload='SoftMoon.WebWare.addPalette(SoftMoon.loaded_palettes.pop())'&gt;&lt;/script&gt;
 	</code>
 
-	<p>Once loaded, the <code>RGB_Calc</code> Class is already set up to give you access to all of the individual conversion functions.&nbsp;
+	<p>Once loaded, the <code>RGB_Calc</code> Class is already set up
+		to give you access to all of the individual conversion functions
+		and the luminance and contrast-ratio functions.&nbsp;
 		These <a href='#quick-audit-mini'>▼<strong>“quick”</strong> functions</a> are tuned for maximum speed,
 		and are members of <code>RGB_Calc</code> so they depend being called as such to access the
 		configuration options: <code>RGB_Calc.config</code>.&nbsp;
@@ -351,7 +348,7 @@ RGB_Calc.config.cull();  // now the RGBA_Factory is whatever it was before we .s
 		except it can interpret any color-model that <code>RGB_Calc</code>
 		is set-up to convert (you can plug-in your own and extend it),
 		as well as <a href='#palettes'>▼“named-colors” from any of the “palettes”</a> that are loaded.&nbsp;
-		The individual <a href='#quick-audit-mini'>▼<strong>“audit”</strong> conversion functions</a> can accept
+		The individual <a href='#quick-audit-mini'>▼<strong>“audit”</strong> conversion/luminance/contrast-ratio functions</a> can accept
 		a single <code>String</code> with the values separated by commas and/or spaces,
 		or an <code>Array</code> of values in either <code>String</code> or numeric (<code>Number</code>) format.&nbsp;
 		They generally (except see special option <code>RGB_Calc.config.inputAsFactor</code>)
@@ -364,8 +361,8 @@ RGB_Calc.config.cull();  // now the RGBA_Factory is whatever it was before we .s
 		Besides the individual conversion functions, a newly constructed “audit” <code>RGB_Calc</code> Class object
 		offers a “general input” interpreter that interprets just about any format you throw at it and returns
 		the <abbr>RGBA</abbr> values in the <code>Object</code> of your choice;
-		an explanation of the <code>String</code> values it can interpret follows the code examples:
-	</p>
+		an explanation of the <code>String</code> values it can interpret follows the code examples:</p>
+
 	<code class='block'>const myCalc=new SoftMoon.WebWare.RGB_Calc;
 const c1=myCalc( "HSL(0.3turn, 50%, 84%)" );
 // By default, the returned value is a custom  RGBA_Color  object;
@@ -518,6 +515,26 @@ ANSI: 8-bit: shades and tones: 35</code>
 				<dd>holds functions converting sRGB to other color-models.</dd>
 		<dt><code>.from</code></dt>
 				<dd>holds functions converting from other color-models to sRGB.</dd>
+		<dt><code>.luminance(<var>color</var>)</code></dt>
+				<dd>This non-conversion function takes the color you input and calculates its
+				“average perceived relative Luminance” — the luminance perceived by
+				the average person viewing the average monitor,
+				relative to “pure white” as displayed by the same monitor.&nbsp;
+				See the <a href='https://www.w3.org/TR/WCAG21/#dfn-relative-luminance' target='W3C'>►<abbr>W3C</abbr>’s formula for luminance</a>
+				except that <code>RGB_Calc</code> also factors in the alpha (opacity) value:
+				if the color is partially transparent,
+				its luminance is correspondingly partially reduced.&nbsp;
+				Luminance is used internally by the <code>.contrastRatio()</code> and <code>.to.contrast()</code> methods.</dd>
+		<dt><code>.contrastRatio(<var>foreground</var>, <var>background</var>)</code></dt>
+				<dd>This non-conversion function calculates the contrast ratio between two colors
+				based on their “average perceived relative Luminance” (as defined above).&nbsp;
+				See the <a href='https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio' target='W3C'>►<abbr>W3C</abbr>’s formula for contrast</a>
+				except that <code>RGB_Calc</code> also factors in the alpha (opacity) value of the foreground:
+				if the foreground color is partially transparent,
+				its luminance is correspondingly partially reduced
+				and some of the luminance of the background color is correspondingly added in.&nbsp;
+				This result will of course ultimately be skewed if the background color is partially transparent also,
+				based on the (third) color behind it, unless said third color is fully opaque black.</dd>
 		<dt><code>.install()</code></dd>
 				<dd>Used to install different conversion functions “on the fly,”
 				such as when there are two different color-blind filters available, etc.</dd>
@@ -537,7 +554,7 @@ ANSI: 8-bit: shades and tones: 35</code>
 				<dd>filters input and returns a factor from <kbd>0—1</kbd>;
 				note hue-angles are circular, so no value is out-of-range.&nbsp;
 				The conversion factor is determined by <code>.config.hueAngleUnit</code>
-				or the value may already a factor if <code>.config.inputAsFactor</code> is true;
+				or the value may already be a factor if <code>.config.inputAsFactor</code> is true;
 				but strings with a hue-angle-unit qualifier at the end respect that conversion factor.&nbsp;
 				If the hue-angle-unit is not recognized, this function returns <code>false</code>.</dd>
 		<dt class='internal'><code>.getAlpha()</code></dt>
@@ -552,7 +569,7 @@ ANSI: 8-bit: shades and tones: 35</code>
 				<ul>
 				<li>a new <code>Array</code> (with the factorized values) when <code>.config.preserveInputArrays=true</code></li>
 				<li>the same <code>Array</code> (with the modified values) when <code>.config.preserveInputArrays=false</code></li>
-				<li><code>false</code> if <code>.getFactor()</code> or <code>this.getHueFactor()</code> or <code>.getAlpha()</code>
+				<li><code>false</code> if <code>this.getFactor()</code> or <code>this.getHueFactor()</code> or <code>this.getAlpha()</code>
 					returns <code>false</code></li>
 				</ul></dd>
 		<dt class='internal'><code>.applyAlpha()</code></dt>
@@ -594,8 +611,8 @@ rgb=mycalc.$('red')  //the long way
 	</dl>
 </div>
 <div class='help'>
-	<p>In general, only the first 4 listed properties of <code>RGB_Calc</code> (above)
-		are used, and in common use, only the first 3 listed.&nbsp;
+	<p>In general, only the first 6 listed properties (methods) of <code>RGB_Calc</code> (above)
+		are used, and in common use, only the first 5 listed.&nbsp;
 		There are 2 different color-blind filters currently available for the <code>RGB_Calc</code> Class library.&nbsp;
 		Both install themselves as <code>RGB_Calc.to.colorblind()</code> methods;
 		but only one can work at a time.&nbsp;
@@ -643,14 +660,14 @@ rgb=mycalc.$('red')  //the long way
 		When you <code>.stack()</code>, the “Stack” adds another new <code>Object</code>
 		to its own top-level making itself the prototype of this new <code>Object</code>,
 		and re-points its calculator’s <code>.config</code> property to this new <code>Object</code>.&nbsp;
-		(Remember, when JavaScript<mark class='macronym'>™</mark> looks for a property of an object and doesn’t find it there,
+		(Remember, when JavaScript<abbr tm>™</abbr> looks for a property of an object and doesn’t find it there,
 		it looks in that object’s prototype and then recursively the prototype’s prototype until it finds the property;
-		this makes native JavaScript<mark class='macronym'>™</mark> Objects an ideal container for configuration values!)&nbsp;
+		this makes native JavaScript<abbr tm>™</abbr> Objects an ideal container for configuration values!)&nbsp;
 		Then you can change the configuration values as you like to temporarily suit your needs,
 		then use <code>.config.cull()</code> to return to the previous configuration values.&nbsp;
-		To make it even easier, <code>.config.stack()</code> accepts a parameter that is a JavaScript<mark class='macronym'>™</mark>
+		To make it even easier, <code>.config.stack()</code> accepts a parameter that is a JavaScript<abbr tm>™</abbr>
 		Object-Properties-Definer (see a good
-		<a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties'>►JavaScript<mark class='macronym'>™</mark> reference</a>):
+		<a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties' target="Mozilla">►JavaScript<abbr tm>™</abbr> reference</a>):
 		for example <code>myCalc.config.stack({roundRGB:{value:false}, RGBA_Factory:{value:Array}});</code>.&nbsp;
 		In this way, you can temporarily modify individual configuration value(s) for an individual calculator
 		and then restore the original value(s), quickly and easily without having to keep track of said original value(s).&nbsp;
@@ -681,7 +698,7 @@ myCalc.config.stack();  // if we did this first (after we created the calculator
 			However, now-a-days it is considered best practice to use a <code>try {…} finally {…}</code>
 			code-block (this config option was developed for legacy dinosaur browsers,
 			but it still may simplify your complex coding schemes).&nbsp;
-			Note using <code>try {…} finally {…}</code> also covers your script’s butt if a native JavaScript<mark class='macronym'>™</mark> Error occurs
+			Note using <code>try {…} finally {…}</code> also covers your script’s butt if a native JavaScript<abbr tm>™</abbr> Error occurs
 			(none now known to exist) in the RGB_Calc code itself.</p>
 <code class='block'>const myCalc=new SoftMoon.WebWare.RGB_Calc;
 document.querySelector('input#userColor').attachEventListener('change', function()
@@ -709,7 +726,7 @@ doItAgainAndAgain('red');  // no errors here - console outputs twice
 doItAgainAndAgain('foo-bar');  // an error but it is not thrown - console outputs twice, second is "null"</code>
 
 	<p>There is no reason you can’t also change the <code>ConfigStack.prototype</code> itself.&nbsp;
-		As is with JavaScript<mark class='macronym'>™</mark>,
+		As is with JavaScript<abbr tm>™</abbr>,
 		this will modify the <em>default</em> configuration values for <strong>all</strong>
 		calculators: the basic <code>RGB_Calc</code> itself, as well any constructed in the past or future.</p>
 </div>
@@ -861,7 +878,7 @@ console.log(foo.bar)  //undefined</code>
 		<dt id='stack'><code>.stack()</code></dt>
 		<dd>Add another layer to the “top” of this <code>ConfigStack</code>’s prototype-based stack.&nbsp;
 			Pass in an optional
-			<a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties'>►<code>Object</code>
+			<a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties' target="Mozilla">►<code>Object</code>
 			properties descriptor</a> to quickly set new configuration values.&nbsp;
 			Then make any temporary changes you like to the configuration values;
 			they will be valid until you <code>.cull()</code> or <code>.reset()</code> this stack (see below).</dd>
@@ -991,7 +1008,7 @@ console.log(foo.bar)  //undefined</code>
 	(<code>RGBA_Color</code>, etc.) by passing to their constructors the configuration options object
 	as the final (5<numerance>th</numerance> or 6<numerance>th</numerance>) value.&nbsp;
 	Note that <strong>unlike</strong> the <code>.config.stack()</code> method,
-	this configuration <code>Object</code> is <strong>not</strong> a JavaScript<mark class='macronym'>™</mark> “properties descriptor.”</p>
+	this configuration <code>Object</code> is <strong>not</strong> a JavaScript<abbr tm>™</abbr> “properties descriptor.”</p>
 
 	<code class='block'>/*
  * this example provides a calculator that returns
@@ -1036,11 +1053,11 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 	when using an “auditing” calculator.&nbsp;
 	It comes packaged with nine named-color database files included:
 	<abbr>ANSI</abbr>, Brewer, common, Crayola, <abbr>CSS</abbr>, Material Design, OpenOffice, universal, &amp; X11.&nbsp;
-	The palette file format can come in two formatting flavors: JavaScript<mark class='macronym'>™</mark> &amp; <abbr>JSON</abbr>.
-	The JavaScript<mark class='macronym'>™</mark>-formatted palette-files can be hard-loaded using an <abbr>HTML</abbr> &lt;script&gt; tag in
+	The palette file format can come in two formatting flavors: JavaScript<abbr tm>™</abbr> &amp; <abbr>JSON</abbr>.
+	The JavaScript<abbr tm>™</abbr>-formatted palette-files can be hard-loaded using an <abbr>HTML</abbr> &lt;script&gt; tag in
 	your web-page; while the <abbr>JSON</abbr>-formatted palette-files can be loaded from a server
 	using <abbr>HTTP</abbr>.&nbsp;
-	The <code>RGB_Calc</code> package comes with a basic JavaScript<mark class='macronym'>™</mark> function
+	The <code>RGB_Calc</code> package comes with a basic JavaScript<abbr tm>™</abbr> function
 	(<code>SoftMoon.WebWare.loadPalettes()</code>)
 	to load <abbr>JSON</abbr> palettes from a server
 	as well as a basic <abbr>PHP</abbr> file for the server’s <code>color_palettes/</code> folder “index”
@@ -1050,11 +1067,11 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 	(Note also that the <abbr>PHP</abbr> “index” file may be replaced with one in any programming language, or even a static text file!)
 	You can simply add/remove palette files (they must have the extension: <kbd>.palette.json</kbd>)
 	from the server’s <code>color_palettes/</code> folder
-	without having to modify any <abbr>HTML</abbr>, JavaScript<mark class='macronym'>™</mark>, or <abbr>PHP</abbr> code
+	without having to modify any <abbr>HTML</abbr>, JavaScript<abbr tm>™</abbr>, or <abbr>PHP</abbr> code
 	(if you use a static text file for the “index”, you will have to keep it manually updated);
 	the “qualifying” palette files in the folder will be loaded.&nbsp;
 	Without a server, the palette files must be loaded via
-	<abbr>HTML</abbr> &lt;script&gt; tags in the JavaScript<mark class='macronym'>™</mark> flavor.</p>
+	<abbr>HTML</abbr> &lt;script&gt; tags in the JavaScript<abbr tm>™</abbr> flavor.</p>
 
 	<p>You can also create your own named-color palettes,
 	and an instructional file to do so is included in the <code>color_palettes/</code> folder.&nbsp;
@@ -1092,18 +1109,18 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 	If your custom palette uses the meta-data property “foobar,”
 	then use the code: <code>SoftMoon.WebWare.Palette.properties.push('foobar');</code></p>
 
-	<p>Palette files are supplied in the JavaScript<mark class='macronym'>™</mark> flavor.&nbsp;
+	<p>Palette files are supplied in the JavaScript<abbr tm>™</abbr> flavor.&nbsp;
 	To use them with a server requires that they are converted to <abbr>JSON</abbr>.&nbsp;
 	This is simple and easy; there is an instructional file to do so manually,
 	as well as a <abbr>PHP</abbr> file to do so automatically.&nbsp;
 	Find both in the <kbd>color_palettes/</kbd> folder.</p>
 
-	<p>To use a JavaScript<mark class='macronym'>™</mark> flavored palette,
+	<p>To use a JavaScript<abbr tm>™</abbr> flavored palette,
 	you must first create a property of the <code>SoftMoon</code> namespace:
 	<code>SoftMoon.loaded_palettes=new Array;</code>
 	then load the file using a &lt;script&gt; tag.&nbsp;
 	The palette will place itself in the <code>SoftMoon.loaded_palettes</code> array.&nbsp;
-	You must then use a JavaScript<mark class='macronym'>™</mark> Event-handler to add the palette to the “processed”
+	You must then use a JavaScript<abbr tm>™</abbr> Event-handler to add the palette to the “processed”
 	palettes (found in <code>SoftMoon.palettes</code>).&nbsp;
 	You use the function <code>SoftMoon.WebWare.addPalette()</code> to process the palette.&nbsp;
 	You can use an “onload” property of the &lt;script&gt; tag as shown in the example at the top of this page,
@@ -1121,7 +1138,7 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 	<strong>unless</strong> it is in an “autoload” folder or its sub-folders.&nbsp;
 	The names of these folders (“trash”, “users”, “autoload”)
 	can be modified, but it is a bit trickier
-	and requires knowing how to use JavaScript<mark class='macronym'>™</mark> Regular Expressions;
+	and requires knowing how to use JavaScript<abbr tm>™</abbr> Regular Expressions;
 	see the <code>loadPalettes()</code> function code in the <kbd>RGB_Calc.js</kbd> file for more details.&nbsp;
 	Once a palette file is deemed “qualified” for loading, it is loaded, processed,
 	and added to <code>SoftMoon.palettes</code></p>
@@ -1130,7 +1147,7 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 	but it can take many, to customize the palette loading process.&nbsp;
 	These are no light-duty customizations.&nbsp;
 	The details of these customizing options are beyond this text,
-	require that you fully understand JavaScript<mark class='macronym'>™</mark>
+	require that you fully understand JavaScript<abbr tm>™</abbr>
 	and asynchronous communications,
 	and are fairly self-explanatory if you read the
 	<code>loadPalettes()</code> function code in the <kbd>RGB_Calc.js</kbd> file.&nbsp;
