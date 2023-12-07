@@ -9,6 +9,6 @@ https://github.com/SoftMoonWebWare/skratchdot.Wickline.colorblind_converter
 
 See the MasterColorPicker project for a demo of this library in use:
 
-http://softmoon-webware.com/MasterColorPicker_instructions.php
+https://softmoon-webware.com/MasterColorPicker_instructions.php
 
 https://github.com/SoftMoonWebWare/MasterColorPicker
