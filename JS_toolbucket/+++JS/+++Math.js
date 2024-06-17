@@ -1,8 +1,7 @@
 // charset=UTF-8
 //  +++Math.js
-//	April 3, 2023
+//  April 7, 2024
 
-//  JavaScript needs true full UTF-8 support for variable & constant names…
 
 Math['+++angleDefiners']={
 	'12°':   {enumerable: true,  value: Math.PI/30  },
@@ -33,15 +32,29 @@ const
 	_180deg=   Math.PI    ,
 	_270deg=   Math.PI*3/2,
 	_360deg=   Math.PI*2  ,
-	_2PI=      Math.PI*2  ,
-	_3PI_2=    Math.PI*3/2,
+/*
+	_PI_2=     Math.PI/2  ,
 	_PI=       Math.PI    ,
-	_PI_2=     Math.PI/2  ;
+	_3PI_2=    Math.PI*3/2,
+	_2PI=      Math.PI*2  ,
+ */
+	 π_2=      Math.PI/2  ,
+		 π=      Math.PI    ,
+	π3_2=      Math.PI*3/2,
+	  π2=      Math.PI*2  ,
+
+		 φ=1.618033988749894848204586834,
+		 Φ=0.618033988749894848204586834;
+
 
 delete Math['+++angleDefiners'];
 
+Math.Trig.degToRad=function(d) {return (d/360)*π2}
 
-//rounds  x  to  dp  decimal places.
+for (let a=0; a<360; a++)  {_['_'+a+'deg']=Math.Trig.degToRad(a);}
+
+
+//rounds  x  to  dp  decimal places. … usually … (pesky floating point errors may occur)
 if (typeof Math.roundTo !== 'function')
 	Math.roundTo=function(dp, x)  {return Math.round(x*Math.pow(10,dp))/Math.pow(10,dp);}
 else console.log('Math.roundTo already exists');
@@ -56,12 +69,31 @@ Math.Trig.getAngle=function(x, y, hwRatio)  { var angle;
 	if (typeof hwRatio !== 'number')  hwRatio=1;
 	if (x==0)  {
 		if (y==0) return 0;
-		else angle=_PI_2;  }
+		else angle=π_2;  }
 	else  angle=Math.atan( Math.abs(y/x) / hwRatio );
-	if (x<0  &&  y>0)  return  _PI-angle;
-	if (x<=0  &&  y<=0)  return  _PI+angle;
-	if (x>=0  &&  y<0)  return  _2PI-angle;
+	if (x<0  &&  y>0)  return  π-angle;
+	if (x<=0  &&  y<=0)  return  π+angle;
+	if (x>=0  &&  y<0)  return  π2-angle;
 	return angle;  }
+
+
+Math.Trig.angleUnitFactors=
+	Object.defineProperties(new Object, {
+		'deg':  {value: 360, enumerable: true},
+		"°":    {value: 360, enumerable: true},
+		'rad':  {value: π2,  enumerable: true},
+		"ᶜ":    {value: π2,  enumerable: true},
+		"ᴿ":    {value: π2,  enumerable: true},
+		'grad': {value: 400, enumerable: true},
+		'ᵍ':    {value: 400, enumerable: true},
+		"%":    {value: 100, enumerable: true},
+		'turn': {value: 1,   enumerable: true},
+		"●":    {value: 1,   enumerable: true}  });
+
+Math.Trig.readAngle=function(angle, unitIn, unitOut)  {
+	angle=angle.trim().match( /^(-?[0-9]+(?:\.[0-9]*)?|-?0?\.[0-9]+)(deg|°|g?rad|ᴿ|ᶜ|ᵍ|%|turn|●)?$/ );
+	if (angle===null)  throw new Error('malformed angle or unknown angle unit');
+	return (angle[1]/Math.Trig.angleUnitFactors[angle[2] || unitIn]) * Math.Trig.angleUnitFactors[unitOut];  }
 
 
 
@@ -74,14 +106,14 @@ Math.Trig.getAngle=function(x, y, hwRatio)  { var angle;
 //  so:   Math.sawtooth(360, -10) = 350  and   Math.sawtooth(360, -850) = 230
 //  whereas:   (-10 % 360) = -10         and        (-850 % 360) = -130
 
-
 if (typeof Math.sawtooth !== 'function')  Math.sawtooth=function(p,x)  {return x-Math.floor(x/p)*p;};
 else console.log('Math.sawtooth already exists');
 
+//((angle % 360) + 360) % 360  ← https://github.com/color-js/color.js/blob/main/src/angles.js
 if (typeof Math.deg !== 'function')  Math.deg=Math.sawtooth.bind(Math, 360);
 else console.log('Math.deg already exists');
 
-if (typeof Math.rad !== 'function')  Math.rad=Math.sawtooth.bind(Math, _2PI);
+if (typeof Math.rad !== 'function')  Math.rad=Math.sawtooth.bind(Math, π2);
 else console.log('Math.rad already exists');
 
 if (typeof Math.turn !== 'function')  Math.turn=Math.sawtooth.bind(Math, 1);
@@ -100,9 +132,9 @@ else console.log('Math.sawtoothAt already exists');
 //  of the height/width ratio ($hw) of a symmetrical ellipse (a.k.a. an oval).
 Math.Trig.ellipseAngle=function($a, $hw)  {  // $a is given in radians;  value returned is in radians
 	if (($a=Math.rad($a))===0)  return 0;
-	if (_3PI_2 < $a)  return  _2PI - Math.atan(Math.tan(_2PI - $a) * $hw);
-	if (_PI < $a)  return  _PI + Math.atan(Math.tan($a - _PI) * $hw);
-	if (_PI_2 < $a)  return  _PI - Math.atan(Math.tan(_PI - $a) * $hw);
+	if (π3_2 < $a)  return  π2 - Math.atan(Math.tan(π2 - $a) * $hw);
+	if (π < $a)  return  π + Math.atan(Math.tan($a - π) * $hw);
+	if (π_2 < $a)  return  π - Math.atan(Math.tan(π - $a) * $hw);
 	return  Math.atan(Math.tan($a) * $hw);  }
 
 
@@ -120,7 +152,7 @@ Math.Trig.rotate_around=function($p, $angle, $center)  {
 	$p.y=$center.y - ($p.y*cos($angle)+$p.x*sin($angle));
 	$p.x=x;  }
 
-Math.Trig.rotate_box=function ($box, $rotation)  {
+Math.Trig.rotate_box=function($box, $rotation)  {
 	$rotation=Math.rad($rotation);
 	var x,y,x1,y1,x2,y2,p;
 	y=( -( y1=y2=$box.height/2 ) );
@@ -130,3 +162,14 @@ Math.Trig.rotate_box=function ($box, $rotation)  {
 	Math.Trig.rotate(p={x:x, y:y1}, $rotation);  y1=p.y;
 	$box.width= Math.round(Math.max(Math.abs(x1), Math.abs(x2))*2)+1;
 	$box.height=Math.round(Math.max(Math.abs(y1), Math.abs(y2))*2)+1;  }
+
+
+Math.invert_3_3_matrix=function(M)  {
+	// https://byjus.com/maths/inverse-of-3-by-3-matrix/
+	// https://byjus.com/maths/determinant-of-a-3x3-matrix/
+	const determinant= M[0][0]*(M[1][1]*M[2][2] - M[1][2]*M[2][1])  -  M[0][1]*(M[1][0]*M[2][2] - M[1][2]*M[2][0])  +  M[0][2]*(M[1][0]*M[2][1] - M[1][1]*M[2][0]);
+	if (determinant===0)  return false;
+	return [
+		[  M[1][1] * M[2][2] - M[1][2] * M[2][1],   -(M[0][1] * M[2][2] - M[0][2] * M[2][1]),    M[0][1] * M[1][2] - M[0][2] * M[1][1] ].map(x=>x/determinant),
+		[-(M[1][0] * M[2][2] - M[1][2] * M[2][0]),    M[0][0] * M[2][2] - M[0][2] * M[2][0],   -(M[0][0] * M[1][2] - M[0][2] * M[1][0])].map(x=>x/determinant),
+		[  M[1][0] * M[2][1] - M[1][1] * M[2][0],   -(M[0][0] * M[2][1] - M[0][1] * M[2][0]),    M[0][0] * M[1][1] - M[0][1] * M[1][0] ].map(x=>x/determinant) ];  }
