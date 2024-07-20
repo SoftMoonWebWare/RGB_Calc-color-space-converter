@@ -5,7 +5,7 @@
 <meta name='description' content='utility for color-space conversions'>
 <meta name='author' content='Joe Golembieski, SoftMoon-WebWare'>
 <meta name='copyright' content='Copyright © 2013, 2022, 2023, 2024 Joe Golembieski, SoftMoon-WebWare'>
-<meta name='page_last-udate' content='June 17, 2024'>
+<meta name='page_last-udate' content='July 20, 2024'>
 <title>RGB_Calc instructions from SoftMoon-WebWare</title>
 <link rel="icon" type="image/x-icon" href="images/SoftMoonWebWare.gif">
 <style type="text/css">
@@ -405,7 +405,7 @@ RGB_Calc.config.cull();  // now the RGBA_Factory &amp; the OKHCGA_Factory are wh
 		and factors from <samp>0.0–1.0</samp> for most other color-models,
 		excepting “-axis” and “Chroma” values (<strong>¡not</strong> “Chroma∝”<strong>!</strong> That is a factor!).</p>
 
-	<h4 id='introuducing …A_'>Introducing … Color-Arrays (<code>…A_Array</code>s) &amp; Color-Objects <code>…A_Color</code>s</h4>
+	<h4 id='introuducing …A_'>Introducing … Color-Arrays (<code>…A_Array</code>s) &amp; Color-Objects (<code>…A_Color</code>s)</h4>
 	<p>Before we continue describing the <code>RGB_Calc</code> class, we need to take a fast look at
 		SoftMoon-WebWare’s “color-Arrays” (<abbr title='also known as'>a.k.a.</abbr> <code>…A_Array</code>s)
 		and “Color-Objects” (<abbr title='also known as'>a.k.a.</abbr> <code>…A_Color</code>s).&nbsp;
@@ -909,9 +909,11 @@ rgb=mycalc.$('red')  //the long way
 		and every <code>ConfigStack</code> instance is “attached” to its calculator or <code>ColorFactory</code> instance.&nbsp;
 		<a href='#quick'>▲“Quick calculators”</a> use the <code>SoftMoon.WebWare.RGB_Calc.definer.quick.ConfigStack</code> constructor,
 		and its prototyped “factories” are all <code>Array</code>s.&nbsp;
-		<a href='#auditing'>▲“Auditing calculators”</a> and <a href='#ColorFactory'>▼<code>ColorFactory</code> instances</a>
-		use the <code>SoftMoon.WebWare.RGB_Calc.definer.quick.ConfigStack</code> constructor,
-		and its prototyped “factories” are all <code>…A_Color</code>s.&nbsp;
+		<a href='#auditing'>▲“Auditing calculators”</a>
+		use the <code>SoftMoon.WebWare.RGB_Calc.definer.audit.ConfigStack</code> constructor,
+		and its prototyped “factories” are all <code>…A_Color</code>s;
+		and <a href='#ColorFactory'>▼<code>ColorFactory</code> instances</a> extend the
+		<code>SoftMoon.WebWare.RGB_Calc.definer.audit.ConfigStack</code> even further, and use <code>A_Array</code>s.&nbsp;
 		Also, every custom “Color <code>Object</code>” (<abbr>a.k.a.</abbr> <code>…A_Color</code>s) (<code>RGBA_Color</code>s, <code>HSLA_Color</code>s, &amp; <code>CMYKA_Color</code>s, etc., etc.)
 		gets its own <code>ConfigStack</code>, and those stacks each may have different “factory” defaults for each type of custom Color <code>Object</code> and their conversion methods:
 		<code>…A_Color</code> conversions output an <code>…A_Color</code> by default.&nbsp;
@@ -1309,7 +1311,7 @@ console.log(foo.bar)  //undefined</code>
 					<th scope='row'>values are shown as factors (0.0–1.0)
 						(not for <abbr>css</abbr> ‖ <abbr>html</abbr> formatting styles, except for hue &amp; alpha values)</th></tr>
 				<tr><td>numeric</td>
-					<th scope='row'>for <code>-axis</code> and <code>Chroma</code> (<strong>!not</strong> <code>Chroma∝</code><strong>!</strong>) values,
+					<th scope='row'>for <code>-axis</code> and <code>Chroma</code> (<strong>¡not</strong> <code>Chroma∝</code><strong>!</strong>) values,
 					this overrides “percent” &amp; “factor” if they are found later in the formatting string.</th></tr>
 				<tr><td>alpha</td>
 					<th scope='row'>always show an alpha value, even if one is not defined.&nbsp;
@@ -1371,7 +1373,9 @@ myCalc.config.RGBA_Factory=function(r,g,b,a)  {
 	<p>The <code>RGB_Calc</code> Class can interpret named colors, as well as color-models,
 	when using an “auditing” calculator.&nbsp;
 	It comes packaged with nine named-color database files included:
-	<abbr>ANSI</abbr>, Brewer, CorelD, Crayola, <abbr>CSS</abbr>, Material Design, OpenOffice, universal, &amp; X11.&nbsp;
+	<abbr>ANSI</abbr>, Brewer, CorelD, Crayola, <abbr>CSS</abbr>, Material Design, OpenOffice, universal, &amp; X11;
+	plus a Pantonic database file generator for Pantone® colors support
+	(git the source data from <a href='https://github.com/Margaret2/pantone-colors/blob/master/pantone-numbers.json'>GitHub</a>).&nbsp;
 	The palette file format can come in two formatting flavors: JavaScript<abbr tm>™</abbr> &amp; <abbr>JSON</abbr>.
 	The JavaScript<abbr tm>™</abbr>-formatted palette-files can be hard-loaded using an <abbr>HTML</abbr> &lt;script&gt; tag in
 	your web-page; while the <abbr>JSON</abbr>-formatted palette-files can be loaded from a server
@@ -1489,7 +1493,7 @@ myCalc.config.RGBA_Factory=function(r,g,b,a)  {
 	You can also customize the functionality of the loading process as you can when loading from a server — see the code.</p>
 
 
-	<h4 id='…A_'>Color-Arrays (<code>…A_Array</code>s) &amp; Color-Objects <code>…A_Color</code>s</h4>
+	<h4 id='…A_'>Color-Arrays (<code>…A_Array</code>s) &amp; Color-Objects (<code>…A_Color</code>)s</h4>
 
 	<p>The <code>RGB_Calc</code> package comes with constructors for custom color <code>Array</code>s (known collectively as the <code>…A_Array</code>s),
 	and their child class custom color <code>Object</code>s (known collectively as the <code>…A_Colors</code>s);
