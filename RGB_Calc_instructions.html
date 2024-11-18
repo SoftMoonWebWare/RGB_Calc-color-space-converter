@@ -5,7 +5,7 @@
 <meta name='description' content='utility for color-space conversions'>
 <meta name='author' content='Joe Golembieski, SoftMoon-WebWare'>
 <meta name='copyright' content='Copyright © 2013, 2022, 2023, 2024 Joe Golembieski, SoftMoon-WebWare'>
-<meta name='page_last-udate' content='July 20, 2024'>
+<meta name='page_last-udate' content='November 18, 2024'>
 <title>RGB_Calc instructions from SoftMoon-WebWare</title>
 <link rel="icon" type="image/x-icon" href="images/SoftMoonWebWare.gif">
 <style type="text/css">
@@ -547,12 +547,18 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 					<p>See <abbr>HCG</abbr> above↑</p></li>
 				<li><range>❇</range><abbr>Lab</abbr> {Lightness, a-axis, b-axis}
 							<aka>(<abbr title='International Commission on Illumination'>CIE</abbr> <abbr>L*a*b*</abbr> color space)</aka>
-							<specs><code>0 ≤ L ≤ (1.0‖100%),&nbsp; (-170‖-136%) ≤ (a,b) ≤ (170‖136%)</code>
-							← where <code>100%=125</code> is the <abbr title='Cascading Style Sheet'>CSS</abbr> standard</specs></li>
+							→&nbsp; <code>(L,a,b,α) ‖ (<var>illuminant</var>, L,a,b,α)</code>
+							<specs><code>0 ≤ L ≤ (100‖100%),&nbsp; (-170‖-136%) ≤ (a,b) ≤ (170‖136%)</code>
+							← where <code>100%=125</code> is the <abbr title='Cascading Style Sheet'>CSS</abbr> standard.</specs>
+							The alpha (opacity) <code>α</code> value is optional as always;
+							and the optional <var>illuminant</var> may be <code>D50</code> (the default — as used by <abbr>CSS</abbr>) or <code>D65</code></li>
 				<li><range>❇</range><abbr>LCh</abbr> {Lightness, Chroma, Hue}
 							<aka>(<abbr title='International Commission on Illumination'>CIE</abbr> <abbr>LCh</abbr> color space)</aka>
-							<specs><code>0 ≤ L ≤ (1.0‖100%),&nbsp; 0 ≤ C ≤ (230‖154%)</code>
-							← where <code>100%=150</code> is the <abbr title='Cascading Style Sheet'>CSS</abbr> standard</specs></li>
+							→&nbsp; <code>(L,C,h,α) ‖ (<var>illuminant</var>, L,C,h,α)</code>
+							<specs><code>0 ≤ L ≤ (100‖100%),&nbsp; 0 ≤ C ≤ (230‖154%)</code>
+							← where <code>100%=150</code> is the <abbr title='Cascading Style Sheet'>CSS</abbr> standard.</specs>
+							The alpha (opacity) <code>α</code> value is optional as always;
+							and the optional <var>illuminant</var> may be <code>D50</code> (the default — as used by <abbr>CSS</abbr>) or <code>D65</code></li>
 				<li><range>❇</range><abbr>Luv</abbr> {Lightness, u-axis, v-axis}
 							<aka>(<abbr title='International Commission on Illumination'>CIE</abbr> <abbr>L*u*v*</abbr> color space)</aka>
 							<specs><code>0 ≤ L ≤ (1.0‖100%),&nbsp; (-215‖-100%) ≤ (u,v) ≤ (215‖100%)</code></specs>
@@ -566,6 +572,14 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 				<li><range>❇</range><abbr>OKLCh</abbr> {OK: Lightness, Chroma, Hue}
 							<specs><code>0 ≤ L ≤ (1.0‖100%),&nbsp; 0 ≤ C ≤ (0.5‖125%)</code>
 							← where <code>100%=0.4</code> is the <abbr title='Cascading Style Sheet'>CSS</abbr> standard</specs></li>
+				<li><range>❇</range><abbr>Jᶻaᶻbᶻ</abbr><br><abbr>Jzazbz</abbr> {Lightness, az-axis, bz-axis}
+							<specs><code>0 ≤ Jᶻ ≤ (1.0‖100%),&nbsp; (-0.5‖-50%) ≤ (aᶻ,bᶻ) ≤ (0.5‖50%)</code></specs></li>
+				<li><range>❇</range><abbr>JᶻCᶻhᶻ</abbr><br><abbr>JzCzhz</abbr> {Lightness, Chroma, Hue}
+							<specs><code>0 ≤ Jᶻ ≤ (1.0‖100%),&nbsp; 0 ≤ Cᶻ ≤ (≈0.7071‖70.71%)</code> ← √(0.5²+0.5²)</specs></li>
+				<li><range>❇</range><abbr>ICᵀCᴾ</abbr><br><abbr>ICtCp</abbr> {Intensity, Tritanopia-axis, Protanopia-axis}
+							<specs><code>0 ≤ I ≤ (1.0‖100%),&nbsp; (-0.5‖-50%) ≤ (Cᵀ,Cᴾ) ≤ (0.5‖50%)</code></specs></li>
+				<li><range>❇</range><abbr>IChᵀᴾ</abbr><br><abbr>IChtp</abbr> {Intensity, Chromaᵀᴾ, hueᵀᴾ}
+							<specs><code>0 ≤ I ≤ (1.0‖100%),&nbsp; 0 ≤ Cᵀᴾ ≤ (≈0.7071‖70.71%)</code> ← √(0.5²+0.5²)</specs></li>
 				<li><range>❇</range><abbr>XYZ</abbr>
 					<aka>(<abbr title='International Commission on Illumination'>CIE</abbr> <abbr>XYZ</abbr> color space)</aka>
 					→&nbsp; <code>(X,Y,Z,α) ‖ (<var>illuminant</var>, X,Y,Z,α) ‖ (<var>RGB-profile</var>, X,Y,Z,α) ‖ (<var>RGB-profile</var>, <var>illuminant</var>, X,Y,Z,α)</code>
@@ -573,7 +587,7 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 					<code>0 ≤ X ≤ 0.950489,&nbsp; 0 ≤ Y ≤ 1,&nbsp; 0 ≤ Z ≤ 1.0883</code> seems to be fair for the <abbr>D65</abbr> illuminant…?</p>
 					<p>The “<var>illuminant</var>” and/or “<var>RGB-profile</var>” is optional as shown; so is the alpha (opacity) value (α) as it always is.&nbsp;
 					Currently, only <code>"sRGB"</code> is valid for “<var>RGB-profile</var>”.&nbsp;
-					There are currently 6 different legal values for “<var>illuminant</var>”
+					There are currently 7 different legal values for “<var>illuminant</var>”
 					(these values are case <strong>sensitive</strong> and don’t miss the underscores _ ).&nbsp;
 					When you define an “illuminant”, you are specifying the mathematical matrix that will be used for the conversion,
 					and the “observer” is implicit with this matrix.&nbsp;
@@ -609,13 +623,19 @@ const rgb_calc=new SoftMoon.WebWare.RGB_Calc(
 							Uses the XYZ→RGB matrix provided by
 							<a target='XYZ' href="http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html">►Bruce Lindbloom</a>,
 							a respected color-theory researcher who’s math is supposedly “more correct”.</dd>
+						<dt><span>D50</span></dt>
+						<dd><specs><span>(Observer = 2°, Illuminant = D50)</span></specs>
+							There is no (known) “standard” matrix for this illuminant.&nbsp; We use “D50_Lindbloom” for now.
 						<dt><span>D50_Lindbloom</span></dt>
 						<dd><specs><span>(Observer = 2°, Illuminant = D50)</span></specs>
 							Uses the XYZ→RGB matrix provided by
 							<a target='XYZ' href="http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html">►Bruce Lindbloom</a>,
 							a respected color-theory researcher who’s math is supposedly “more correct”.&nbsp;
 							The “D50” illuminant is the gateway to other <abbr title='Red-Green-Blue'>RGB</abbr> color-spaces
-							like “ProPhoto RGB” or “Wide Gamut RGB”.</dd>
+							like “ProPhoto RGB” or “Wide Gamut RGB”.&nbsp;
+							At this time, this is our “default” <code>D50</code> matrix,
+							and is used internally when calculating values for the
+							<abbr title='International Commission on Illumination'>CIE</abbr> <abbr>L*a*b*</abbr> color-space model.</dd>
 						<dt><span>D65_Wickline</span></dt>
 						<dd><specs><span>(Observer = 2°, Illuminant = D65)</span></specs>
 							Uses the XYZ→RGB matrix provided by
@@ -1142,6 +1162,10 @@ console.log(foo.bar)  //undefined</code>
 		<dt><code>.OKHSVA_Factory</code></dt>
 		<dt><code>.OKHCGA_Factory</code></dt>
 		<dt><code>.OKHWBA_Factory</code></dt>
+		<dt><code>.JᶻaᶻbᶻA_Factory</code></dt>
+		<dt><code>.JᶻCᶻhᶻA_Factory</code></dt>
+		<dt><code>.ICᵀCᴾA_Factory</code></dt>
+		<dt><code>.ICHᵀᴾA_Factory</code></dt>
 		<dt><code>.XYZA_Factory</code></dt>
 		<dd>These are pointers to the constructors for the output <code>Object</code> holding color-conversion values.&nbsp;
 		You may want to use a simple <code>Array</code> (nice ’n’ fast);
@@ -1256,19 +1280,20 @@ console.log(foo.bar)  //undefined</code>
 			<table><caption>output formatting style:</caption>
 			<tbody>
 				<tr><td>#<footmark>‡</footmark></td>  <th rowspan='3' scope='row'>#<var>rrggbbaa</var><footmark>‡</footmark><br><var>rrggbbaa</var><footmark>‡</footmark></th></tr>
-				<tr><td>!#<footmark>‡</footmark></td>
+				<tr><td>!#<footmark>‡</footmark></td></tr>
 				<tr><td>hex<footmark>‡</footmark></td></tr>
-				<td><abbr>css</abbr><footmark>◊</footmark></td>  <th rowspan='5' scope='row'>RGBA(<var>r</var>, <var>g</var>, <var>b</var>, <var>a</var>)<footmark>☼</footmark></th></tr>
-				<td><abbr>css5</abbr><footmark>◊</footmark></td></tr>
-				<td><abbr>html</abbr><footmark>◊</footmark></td></tr>
-				<td>wrap</td></tr>
-				<td>function</td></tr>
-				<td>prefix</td>  <th scope='row'>RGBA: <var>r</var>, <var>g</var>, <var>b</var>, <var>a</var><footmark>☼</footmark></th></tr>
-				<td>commas<footmark>❇</footmark></td>  <th rowspan='2' scope='row'><var>r</var>, <var>g</var>, <var>b</var>, <var>a</var></th></tr>
-				<td><abbr title='comma-separated values'>csv</abbr><footmark>❇</footmark></td></tr>
-				<td>plain<footmark>❇</footmark></td>  <th scope='row'><var>r</var> <var>g</var> <var>b</var> <var>a</var></th></tr>
-				<td>tabbed</td>  <th scope='row'><var>r</var><kbd><span>Tab</span></kbd><var>g</var><kbd><span>Tab</span></kbd><var>b</var><kbd><span>Tab</span></kbd><var>a</var></th></tr>
-				<td>self</td>  <th scope='row'>RGBA_Color(<var>r</var>, <var>g</var>, <var>b</var>, <var>a</var>)</th></tr>
+				<tr><td>color<footmark>♣</footmark></td>  <th scope='row'>color(<var>sRGB</var> <var>r</var> <var>g</var> <var>b</var> <var>α</var>)</th></tr>
+				<tr><td><abbr>css</abbr><footmark>◊</footmark></td>  <th rowspan='5' scope='row'>RGBA(<var>r</var>, <var>g</var>, <var>b</var>, <var>a</var>)<footmark>☼</footmark></th></tr>
+				<tr><td><abbr>css5</abbr><footmark>◊</footmark></td></tr>
+				<tr><td><abbr>html</abbr><footmark>◊</footmark></td></tr>
+				<tr><td>wrap</td></tr>
+				<tr><td>function</td></tr>
+				<tr><td>prefix</td>  <th scope='row'>RGBA: <var>r</var>, <var>g</var>, <var>b</var>, <var>a</var><footmark>☼</footmark></th></tr>
+				<tr><td>commas<footmark>❇</footmark></td>  <th rowspan='2' scope='row'><var>r</var>, <var>g</var>, <var>b</var>, <var>a</var></th></tr>
+				<tr><td><abbr title='comma-separated values'>csv</abbr><footmark>❇</footmark></td></tr>
+				<tr><td>plain<footmark>❇</footmark></td>  <th scope='row'><var>r</var> <var>g</var> <var>b</var> <var>a</var></th></tr>
+				<tr><td>tabbed</td>  <th scope='row'><var>r</var><kbd><span>Tab</span></kbd><var>g</var><kbd><span>Tab</span></kbd><var>b</var><kbd><span>Tab</span></kbd><var>a</var></th></tr>
+				<tr></tr><td>self</td>  <th scope='row'>RGBA_Color(<var>r</var>, <var>g</var>, <var>b</var>, <var>a</var>)</th></tr>
 			</tbody>
 			<tfoot>
 				<tr><td colspan='2'>All formats may not include the alpha value if it is undefined.</td></tr>
@@ -1278,6 +1303,7 @@ console.log(foo.bar)  //undefined</code>
 					presence of <code>#</code> in the format string itself.&nbsp;
 					<code>!#</code> closer to the beginning of the format-string negates <code>#</code> later in the string, and visa-verse.&nbsp;
 					In all cases, the format-string overrides <code>.config.useHexSymbol</code>.</td></tr>
+				<tr><td colspan='2'>♣ The <abbr>CSS</abbr> “color” function format only works for color-models that <abbr>CSS</abbr> supports.</td></tr>
 				<tr><td colspan='2'>◊ <abbr>css</abbr> &amp; <abbr>html</abbr> formatting styles
 					prevent (most of) the numeric output format from being a factor (see the next table),
 					and prevent hue-angle units from being “symbols”
@@ -1317,6 +1343,13 @@ console.log(foo.bar)  //undefined</code>
 					<th scope='row'>always show an alpha value, even if one is not defined.&nbsp;
 					If it is not defined, it becomes defined in the <code>RGBA_Color</code> object
 					as the <code>.config.defaultAlpha</code> value, or <code>100%</code> if the default is not defined.</th></tr>
+				<tr><td>precision:</td>
+					<th scope='row'>For some color-space models,
+					you may define the number of significant digits that are shown
+					for some of the models’ values.&nbsp;
+					(Note that precision below the default will result in some colors not converting back properly.)&nbsp;
+					JavaScript™ limits the maximum precision internally.&nbsp;
+					For example:<br><code>precision: 10</code></th></tr>
 			</table>
 
 			<table><caption>Hue-angle-unit output format:</caption>
